@@ -1,3 +1,4 @@
+USE piattaforma_streaming_musicale;
 INSERT INTO utente(`email`, `nome`, `cognome`, `passw`, `tipo`, `num_telefono`, `cf`) 
 VALUES 
 ('margheritaursino@gmail.com', 'margherita', 'ursino', 'marghe02', 0, '3398423455', 'MRGURSN015H865R'),
@@ -7,6 +8,7 @@ VALUES
 ('robertarusso@gmail.com', 'roberta', 'russo', 'russo07', 0, '3341256355', 'RBRTRS01F34H154S'),
 ('federicafirrito@gmail.com', 'federica', 'firrito', 'fede88', 1, '3362145711', 'FDRCFR02S10H163S');
 
+USE piattaforma_streaming_musicale;
 INSERT INTO Tipo_Utente(`tipo`)
 VALUES 
 ('premium'),
@@ -16,6 +18,7 @@ VALUES
 ('free'),
 ('free');
 
+USE piattaforma_streaming_musicale;
 INSERT INTO contenuto(`nome`, `duarata`, `riproduzione`, `tipo`) 
 VALUES 
 ('bello', 215, 0, 0),
@@ -29,6 +32,7 @@ VALUES
 ('muschio', 2215, 0, 1),
 ('risica', 206, 0, 0);
 
+USE piattaforma_streaming_musicale;
 INSERT INTO Crea_Contenuto(`idContenuto`,`nomeArtista`) 
 VALUES 
 (1,'joji'),
@@ -42,6 +46,7 @@ VALUES
 (9,'selvaggio'),
 (10,'non rosica');
 
+USE piattaforma_streaming_musicale;
 INSERT INTO Tipo_Contenuto(`idTipoContenuto`,`tipo`)
 VALUES 
 (1,'brano'),
@@ -55,6 +60,7 @@ VALUES
 (9,'podcast'),
 (10,'brano');
 
+USE piattaforma_streaming_musicale;
 INSERT INTO Preferenza_Genere(`email`, `idGenere`)
 VALUES
 ('margheritaursino@gmail.com',  1),
@@ -64,6 +70,7 @@ VALUES
 ('robertarusso@gmail.com', 7),
 ('federicafirrito@gmail.com', 5);
 
+USE piattaforma_streaming_musicale;
 INSERT INTO Genere(`idGenere`, `genere`)
 VALUES
 (1,'classica'),
@@ -77,6 +84,7 @@ VALUES
 (9,'folk'),
 (10,'folklore');
 
+USE piattaforma_streaming_musicale;
 INSERT INTO playlist(`email`, `nomePlaylist`,`num_tracce_P`)
 VALUES
 ('benedettostraquadanio@gmail.com', 'tempo libero', 5),
@@ -91,6 +99,7 @@ VALUES
 ('annapistorio@gmail.com', 'lettura', 6),
 ('federicafirrito@gmail.com', 'relazionefinita', 9);
 
+USE piattaforma_streaming_musicale;
 INSERT INTO Artista(`nomeArtista`) 
 VALUES 
 ('joji'),
@@ -104,6 +113,7 @@ VALUES
 ('selvaggio'),
 ('non rosica');
 
+USE piattaforma_streaming_musicale;
 INSERT INTO Appartiene_Genere(`idGenere`, `idContenuto`)
 VALUES
 (3,1),
@@ -117,6 +127,7 @@ VALUES
 (6,8),
 (9,10);
 
+USE piattaforma_streaming_musicale;
 INSERT INTO Abbonamento(`idAbbonamento`, `tipo`,`email`)
 VALUES 
 (1,'premium','benedettostraquadanio@gmail.com'),
@@ -130,6 +141,7 @@ VALUES
 (9,'premium','annapistorio@gmail.com'),
 (10,'premium','federicafirrito@gmail.com');
 
+USE piattaforma_streaming_musicale;
 INSERT INTO Album(`nomeArtista`, `titolo`,`data_pubblicazione`,`num_tracce`)
 VALUES 
 ('alaimo','DBS', '2006/11/15','15'),
@@ -149,6 +161,7 @@ VALUES
 ('baffo','pelle','2000/02/02','6'),
 ('another love','distorsione','2022/12/22','7');
 
+USE piattaforma_streaming_musicale;
 INSERT INTO contenuti_playlist(`idContenuto`, `nomePlaylist`, `email`)
 VALUES
 (1, 'tempo libero','benedettostraquadanio@gmail.com'),
@@ -218,18 +231,21 @@ VALUES
 (1, 'relazionefinita', 'federicafirrito@gmail.com'),
 (10, 'relazionefinita', 'federicafirrito@gmail.com');
 
+USE piattaforma_streaming_musicale;
 INSERT INTO Metodo_Di_Pagamento(`idMet_Pag`, `CVV`, `num_carta`,`data_scadenza`, `email`)
 VALUES 
 (1,123,123145874125,'2024/12/05','annapistorio@gmail.com'),
 (2,456,156423451539,'2023/11/11','benedettostraquadanio@gmail.com'),
 (3,789,752315249854,'2026/05/15','federicafirrito@gmail.com');
 
+USE piattaforma_streaming_musicale;
 INSERT INTO pagamento(`idAbbonamento`, `data`, `email`)
 VALUES
 (1,'2023/02/15','benedettostraquadanio@gmail.com'),
 (2,'2023/02/02','annapistorio@gmail.com'),
 (3,'2023/02/11','federicafirrito@gmail.com');
 
+USE piattaforma_streaming_musicale;
 INSERT INTO Riproduzione_Contenuto(`idContenuto`, `email`, `data`)
 VALUES
 (1,'benedettostraquadanio@gmail.com','2023/02/22'),
