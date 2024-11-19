@@ -86,7 +86,8 @@ To use Maven in your project, you first need to install it. Follow these steps t
    mvn -v
 
 You should see the installed version of Maven.
-2. Running Profiles with Maven
+
+###2. Running Profiles with Maven
 
 Maven allows you to use profiles to configure various aspects of the build process, such as dependencies, plugins, and properties. To run a specific profile, you can use the mvn command with the -P option.
 
