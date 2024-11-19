@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS Pagamento (
 
 CREATE TABLE IF NOT EXISTS Abbonamento (
     idAbbonamento TINYINT UNSIGNED AUTO_INCREMENT,
-    tipo VARCHAR(50) UNIQUE,
+    tipo VARCHAR(50),
     email VARCHAR(100),
     PRIMARY KEY (idAbbonamento),
     FOREIGN KEY (email)
