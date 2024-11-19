@@ -42,7 +42,7 @@ To get started with the music streaming platform database project, follow these 
 
 ## User Interface
 
-The music streaming platform project includes a web-based user interface built using Flask, a Python web framework. The interface is divided into the following main sections:
+The music streaming platform project includes a web-based user interface. The interface is divided into the following main sections:
 
 1. **Home Page**:
    - Displays featured artists, new releases, and personalized song recommendations for the logged-in user.
