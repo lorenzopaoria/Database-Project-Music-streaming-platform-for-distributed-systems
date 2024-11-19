@@ -1,24 +1,55 @@
-import java.io.*;
-import java.net.*;
+package com.example;
+
+import java.sql.*;
+import java.util.Scanner;
 
 public class DatabaseClient {
     public static void main(String[] args) {
-        try (Socket socket = new Socket("localhost", 12345); // Porta del server
-            BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-            PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader serverInput = new BufferedReader(new InputStreamReader(socket.getInputStream()))
-        ) {
-            System.out.println("Inserisci la query SQL:");
-            String query = input.readLine();
-            output.println(query); // Invia la query al server
+        Scanner scanner = new Scanner(System.in);
+        
+        // Connessione al database all'inizio
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            // Ciclo per permettere l'esecuzione di più query
+            while (true) {
+                System.out.println("Inserisci la query SQL (ad esempio: SELECT * FROM contenuti) o 'exit' per uscire:");
+                String query = scanner.nextLine();
 
-            // Legge la risposta del server
-            String response;
-            while ((response = serverInput.readLine()) != null) {
-                System.out.println("Risultato: " + response);
+                // Uscita dal programma
+                if (query.equalsIgnoreCase("exit")) {
+                    System.out.println("Uscita dal programma...");
+                    break;
+                }
+                
+                try (Statement stmt = conn.createStatement()) {
+                    ResultSet rs = stmt.executeQuery(query);
+
+                    // Get metadata to dynamically print column names and values
+                    ResultSetMetaData metaData = rs.getMetaData();
+                    int columnCount = metaData.getColumnCount();
+
+                    // Print column names
+                    for (int i = 1; i <= columnCount; i++) {
+                        System.out.printf("%-20s", metaData.getColumnName(i));
+                    }
+                    System.out.println("\n" + "-".repeat(20 * columnCount));
+
+                    // Print results
+                    while (rs.next()) {
+                        for (int i = 1; i <= columnCount; i++) {
+                            System.out.printf("%-20s", rs.getString(i));
+                        }
+                        System.out.println();
+                    }
+
+                    rs.close();  // Chiudere il ResultSet
+                } catch (SQLException e) {
+                    System.out.println("Errore durante l'esecuzione della query: " + e.getMessage());
+                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println("Errore durante la connessione al database: " + e.getMessage());
+        } finally {
+            scanner.close();
         }
     }
 }

@@ -1,46 +1,32 @@
 package com.example;
 
-import java.io.*;
-import java.net.*;
-import java.sql.*;
-import com.example.DatabaseConnection;
-
-
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class DatabaseServer {
-    public static void main(String[] args) {
-        try (ServerSocket serverSocket = new ServerSocket(12345)) { // Porta 12345
-            System.out.println("Server in ascolto sulla porta 12345...");
-            
+
+    private static final String URL = "jdbc:mysql://127.0.0.1:3306/piattaforma_streaming_musicale";
+    private static final String USER = "root";
+    private static final String PASSWORD = "";
+
+    public static void startServer() {
+        try {
+            // Inizializza la connessione al database
+            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            System.out.println("Connessione al database avvenuta con successo!");
+
+            // Il server resta in attesa di nuove richieste (simulato con un ciclo)
             while (true) {
-                Socket clientSocket = serverSocket.accept();
-                System.out.println("Connessione accettata da: " + clientSocket.getInetAddress());
-                handleClient(clientSocket);
+                // Qui potresti aggiungere un ciclo infinito per gestire richieste
+                // Può essere una gestione di richieste a un server o anche solo per rimanere attivo
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println("Errore durante la connessione al database: " + e.getMessage());
         }
     }
 
-    private static void handleClient(Socket clientSocket) {
-        try (
-            InputStream input = clientSocket.getInputStream();
-            OutputStream output = clientSocket.getOutputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-            PrintWriter writer = new PrintWriter(output, true)
-        ) {
-            String query = reader.readLine(); // Legge la query inviata dal client
-            try (Connection conn = DatabaseConnection.getConnection();
-                Statement stmt = conn.createStatement()) {
-                ResultSet rs = stmt.executeQuery(query);
-                while (rs.next()) {
-                    writer.println(rs.getString(1)); // Stampa il risultato della query
-                }
-            } catch (SQLException e) {
-                writer.println("Errore durante l'esecuzione della query: " + e.getMessage());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void main(String[] args) {
+        startServer();
     }
 }
