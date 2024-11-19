@@ -20,12 +20,24 @@ WHERE nome = 'ASTROWORLD';
 
 #Op5: Visualizzare il numero di tracce di un album
 USE piattaforma_streaming_musicale;
-INSERT INTO album(`nomeArtista`,`titolo`, `data_pubblicazione`, `num_tracce`)
-VALUES ('Travis Scott', 'Rodeo', '2001/11/24', '12')
 
-SELECT num_tracce
-FROM album 
-WHERE titolo = 'Rodeo' AND nomeArtista='Travis Scott';
+-- Recupera il numero di tracce, usa 12 se non viene trovato nulla
+SET @num_tracce = (SELECT COALESCE(num_tracce, 12) 
+                    FROM album 
+                    WHERE titolo = 'Rodeo' AND nomeArtista = 'Travis Scott' 
+                    LIMIT 1);
+
+SELECT @num_tracce;
+
+-- Inserisci il nuovo album con il numero di tracce ottenuto
+INSERT INTO album(`nomeArtista`, `titolo`, `data_pubblicazione`, `num_tracce`)
+VALUES ('Travis Scott', 'Rodeo', '2001/11/24', @num_tracce);
+
+
+-- Inserisci il nuovo album
+INSERT INTO album(`nomeArtista`, `titolo`, `data_pubblicazione`, `num_tracce`)
+VALUES ('Travis Scott', 'Rodeo', '2001/11/24', @num_tracce);
+
 
 #Op6: Visualizzare il numero di tracce di una playlist
 USE piattaforma_streaming_musicale;
@@ -41,9 +53,9 @@ USE piattaforma_streaming_musicale;
 SELECT riproduzione
 FROM contenuto
 WHERE idContenuto=(SELECT idContenuto
-                   FROM Crea_Contenuto NATURAL JOIN contenuto
-                   WHERE nomeArtista='Travis scott' AND nome='ASTROWORLD'
-                   )
+                    FROM Crea_Contenuto NATURAL JOIN contenuto
+                    HERE nomeArtista='Travis scott' AND nome='ASTROWORLD'
+                    )
 
 #Op8: Cambiare tipo di account da “free” a “premium”
 USE piattaforma_streaming_musicale;
