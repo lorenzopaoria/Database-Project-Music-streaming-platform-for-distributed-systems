@@ -71,6 +71,35 @@ The music streaming platform project includes a web-based user interface. The in
 
 The user interface is designed with a clean and modern look, ensuring a seamless and intuitive experience for music enthusiasts. It leverages the Flask web framework, along with Bootstrap for styling and responsive design.
 
+## Maven Installation
+
+To use Maven in your project, you first need to install it. Follow these steps to install Maven:
+
+### 1. Installation on Windows
+
+1. Download the latest version of Maven from [https://maven.apache.org/download.cgi](https://maven.apache.org/download.cgi).
+2. Extract the contents of the downloaded archive to a directory of your choice, for example `C:\Program Files\Apache\maven`.
+3. Add the `MAVEN_HOME` environment variable pointing to the directory where you extracted Maven (e.g., `C:\Program Files\Apache\maven`).
+4. Add `C:\Program Files\Apache\maven\bin` to the `PATH` environment variable.
+5. Verify the installation by opening the command prompt and typing:
+   ```bash
+   mvn -v
+
+You should see the installed version of Maven.
+2. Running Profiles with Maven
+
+Maven allows you to use profiles to configure various aspects of the build process, such as dependencies, plugins, and properties. To run a specific profile, you can use the mvn command with the -P option.
+
+To run a profile defined in the pom.xml file, use the following command:
+ ```
+ mvn -Pserver exec:java
+   ```
+If you need to run a different profile, such as client, you can specify it like this:
+
+ ```
+ mvn -Pclient exec:java
+   ```
+
 ## Contributing
 
 If you find any issues or have suggestions for improvements, please feel free to submit a pull request or open an issue in the repository.
