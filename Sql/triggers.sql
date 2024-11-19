@@ -1,4 +1,5 @@
 #TRIGGER DI INTEGRITA': un utente di tipo 'free' può ascoltare un massimo di 10 contenuti al giorno
+USE piattaforma_streaming_musicale;
 DELIMITER $$
 CREATE TRIGGER ascolti_free
 AFTER INSERT ON Riproduzione_Contenuto FOR EACH ROW
@@ -24,6 +25,7 @@ END$$
 DELIMITER ;
 
 #TRIGGER DI INTEGRITA': un utente di tipo 'free' non può creare playlist
+USE piattaforma_streaming_musicale;
 DELIMITER $$
 CREATE TRIGGER playlist_free
 AFTER INSERT ON playlist FOR EACH ROW
@@ -47,6 +49,7 @@ END$$
 DELIMITER ;
 
 #TRIGGER DI INTEGRITA': un utente può effettuare un upgrade a "premium" dopo il pagamento dell'abbonamento
+USE piattaforma_streaming_musicale;
 DELIMITER $$
 CREATE TRIGGER free_to_premium
 AFTER INSERT ON pagamento FOR EACH ROW
@@ -65,6 +68,7 @@ END$$
 DELIMITER ; 
 
 #TRIGGER DATO: incrementare il numero di riproduzioni di un brano o podcast tutte le volte che viene riprodotto
+USE piattaforma_streaming_musicale;
 DELIMITER $$
 CREATE TRIGGER numero_riproduzioni
 AFTER INSERT ON Riproduzione_Contenuto FOR EACH ROW
