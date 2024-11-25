@@ -91,6 +91,10 @@ You should see the installed version of Maven.
 
 Maven allows you to use profiles to configure various aspects of the build process, such as dependencies, plugins, and properties. To run a specific profile, you can use the mvn command with the -P option.
 
+First, execute the following command to clean and install dependencies:
+```
+mvn clean install
+   ```
 To run a profile defined in the pom.xml file, use the following command:
  ```
  mvn -Pserver exec:java
