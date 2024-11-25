@@ -1,3 +1,7 @@
 com\example\DatabaseClient.class
-com\example\DatabaseConnection.class
+com\example\DatabaseProxy.class
+com\example\AccessControl.class
+com\example\ClientHandler.class
 com\example\DatabaseServer.class
+com\example\dao\UserDAO.class
+com\example\factory\DatabaseFactory.class
