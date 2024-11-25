@@ -1,6 +1,6 @@
 # Music Streaming Platform Database Project
 
-This repository contains the files for a database project that models a music streaming platform. The goal of this project is to design and implement a relational database schema that can effectively store and manage data related to users, artists, songs, playlists, and other essential entities in a music streaming application.
+This repository contains the files for a database project that models a music streaming platform. The goal of this project is to design and implement a relational database schema that can effectively store and manage data related to users, artists, songs, playlists, and other essential entities in a music streaming application. All of this with the implementation of a distributed system using Maven, along with its management for the database created.
 
 ## Project Overview
 
