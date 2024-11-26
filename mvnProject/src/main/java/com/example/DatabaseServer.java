@@ -2,6 +2,8 @@ package com.example;
 
 import com.example.dao.UserDAO;
 import com.example.factory.DatabaseFactory;
+import com.example.logging.DatabaseAuditLogger;
+import com.example.security.RoleBasedAccessControl;
 
 import java.io.*;
 import java.net.*;
@@ -17,6 +19,8 @@ public class DatabaseServer {
     private static final int PORT = 12345;
     private static final int THREAD_POOL_SIZE = 10;
     private static final Logger LOGGER = Logger.getLogger(DatabaseServer.class.getName());
+    private static final DatabaseAuditLogger AUDIT_LOGGER = new DatabaseAuditLogger();
+    private static final RoleBasedAccessControl ACCESS_CONTROL = new RoleBasedAccessControl();
 
     public static void main(String[] args) {
         ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
@@ -40,104 +44,99 @@ public class DatabaseServer {
             threadPool.shutdown();
         }
     }
-}
 
-class ClientHandler implements Runnable {
-    private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
-    private final Socket clientSocket;
+    static class ClientHandler implements Runnable {
+        private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
+        private final Socket clientSocket;
 
-    public ClientHandler(Socket clientSocket) {
-        this.clientSocket = clientSocket;
-    }
+        public ClientHandler(Socket clientSocket) {
+            this.clientSocket = clientSocket;
+        }
 
-    @Override
-    public void run() {
-        Connection conn = null;
-        try {
-            // generete random usedId
-            String userId = generateRandomUserId();
+        @Override
+        public void run() {
+            Connection conn = null;
+            try {
+                String userId = generateRandomUserId();
 
-            // create output stream 
-            OutputStream os = clientSocket.getOutputStream();
-            ObjectOutputStream output = new ObjectOutputStream(os);
-            output.flush(); // Flush the stream header
-
-            // create input stream
-            InputStream is = clientSocket.getInputStream();
-            ObjectInputStream input = new ObjectInputStream(is);
-
-            // establish database connection
-            conn = DatabaseFactory.getConnection();
-
-            LOGGER.info("Handling client connection");
-
-            // authentication
-            String email = (String) input.readObject();
-            String password = (String) input.readObject();
-
-            UserDAO userDAO = new UserDAO(conn);
-            String role = userDAO.authenticate(email, password);
-
-            if (role == null) {
-                output.writeObject("Authentication failed!");
+                OutputStream os = clientSocket.getOutputStream();
+                ObjectOutputStream output = new ObjectOutputStream(os);
                 output.flush();
-                return;
-            }
 
-            String welcomeMessage = String.format("Authentication successful! Welcome, %s (User ID: %s)", role, userId);
-            output.writeObject(welcomeMessage);
-            output.flush();
+                InputStream is = clientSocket.getInputStream();
+                ObjectInputStream input = new ObjectInputStream(is);
 
-            LOGGER.info(String.format("User %s (%s) authenticated with role %s", email, userId, role));
+                conn = DatabaseFactory.getConnection();
 
-            // query processing loop
-            while (!Thread.currentThread().isInterrupted()) {
-                String query = (String) input.readObject();
-                LOGGER.info(String.format("User %s (%s) sent query: %s", email, userId, query));
+                LOGGER.info("Handling client connection");
 
-                if ("exit".equalsIgnoreCase(query)) {
-                    output.writeObject("Exiting...");
+                String email = (String) input.readObject();
+                String password = (String) input.readObject();
+
+                UserDAO userDAO = new UserDAO(conn);
+                String role = userDAO.authenticate(email, password);
+
+                if (role == null) {
+                    output.writeObject("Authentication failed!");
                     output.flush();
-                    break;
+                    return;
                 }
 
-                if (AccessControl.isAllowed(role, query)) {
-                    try {
-                        String result = userDAO.executeQuery(query);
-                        output.writeObject(result);
+                String welcomeMessage = String.format("Authentication successful! Welcome, %s (User ID: %s)", role, userId);
+                output.writeObject(welcomeMessage);
+                output.flush();
+
+                LOGGER.info(String.format("User %s (%s) authenticated with role %s", email, userId, role));
+
+                while (!Thread.currentThread().isInterrupted()) {
+                    String query = (String) input.readObject();
+                    LOGGER.info(String.format("User %s (%s) sent query: %s", email, userId, query));
+
+                    if ("exit".equalsIgnoreCase(query)) {
+                        output.writeObject("Exiting...");
                         output.flush();
-                    } catch (SQLException e) {
-                        LOGGER.log(Level.SEVERE, "Error executing query", e);
-                        output.writeObject("Query execution error: " + e.getMessage());
+                        break;
+                    }
+
+                    if (ACCESS_CONTROL.isAllowed(role, query)) {
+                        try {
+                            String result = userDAO.executeQuery(query);
+                            output.writeObject(result);
+                            output.flush();
+                        } catch (SQLException e) {
+                            LOGGER.log(Level.SEVERE, "Error executing query", e);
+                            output.writeObject("Query execution error: " + e.getMessage());
+                            output.flush();
+                        }
+                    } else {
+                        output.writeObject("Access denied: insufficient permissions.");
                         output.flush();
                     }
-                } else {
-                    output.writeObject("Access denied: insufficient permissions.");
-                    output.flush();
                 }
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Client handling error", e);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Database connection error", e);
-        } finally {
-            if (conn != null) {
+            } catch (IOException | ClassNotFoundException e) {
+                LOGGER.log(Level.SEVERE, "Client handling error", e);
+            } catch (SQLException e) {
+                LOGGER.log(Level.SEVERE, "Database connection error", e);
+            } finally {
+                if (conn != null) {
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        LOGGER.log(Level.SEVERE, "Error closing database connection", e);
+                    }
+                }
                 try {
-                    conn.close();
-                } catch (SQLException e) {
-                    LOGGER.log(Level.SEVERE, "Error closing database connection", e);
+                    if (!clientSocket.isClosed()) {
+                        clientSocket.close();
+                    }
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, "Error closing client socket", e);
                 }
-            }
-            try {
-                if (!clientSocket.isClosed()) {
-                    clientSocket.close();
-                }
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Error closing client socket", e);
             }
         }
-    }
-    private String generateRandomUserId() {
-        return UUID.randomUUID().toString().substring(0, 8);
+
+        private String generateRandomUserId() {
+            return UUID.randomUUID().toString().substring(0, 8);
+        }
     }
 }

@@ -9,26 +9,22 @@ public class DatabaseClient {
         Scanner scanner = new Scanner(System.in);
         
         try (Socket socket = new Socket("127.0.0.1", 12345)) {
-            // input stream first
             InputStream is = socket.getInputStream();
             ObjectInputStream input = new ObjectInputStream(is);
 
-            // create output stream
             OutputStream os = socket.getOutputStream();
             ObjectOutputStream output = new ObjectOutputStream(os);
-            output.flush(); // Flush the stream header
+            output.flush();
 
             System.out.println("Insert email: ");
             String email = scanner.nextLine();
             System.out.println("Insert password: ");
             String password = scanner.nextLine();
 
-            // send authentication credentials
             output.writeObject(email);
             output.writeObject(password);
-            output.flush(); // thread
+            output.flush();
 
-            // read authentication response
             String response = (String) input.readObject();
             System.out.println(response);
 
