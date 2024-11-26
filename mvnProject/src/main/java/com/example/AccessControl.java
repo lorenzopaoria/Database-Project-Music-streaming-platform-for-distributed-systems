@@ -7,7 +7,7 @@ public class AccessControl {
         if ("admin".equalsIgnoreCase(role)) {
             return true;
         } else if ("premium".equalsIgnoreCase(role)) {
-            if (queryType.equals("DELETE") || queryType.equals("DROP")) {
+            if (queryType.equals("DROP")) {
                 return false;
             }
             if ((queryType.equals("INSERT") || queryType.equals("UPDATE"))

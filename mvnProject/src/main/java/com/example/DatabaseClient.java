@@ -2,11 +2,12 @@ package com.example;
 
 import java.io.*;
 import java.net.*;
+import java.util.List;
 import java.util.Scanner;
 
 public class DatabaseClient {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        /*Scanner scanner = new Scanner(System.in);
         
         try (Socket socket = new Socket("127.0.0.1", 12345)) {
             InputStream is = socket.getInputStream();
@@ -50,6 +51,66 @@ public class DatabaseClient {
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Error connecting to the server:" + e.getMessage());
             e.printStackTrace();
+        }
+    }*/
+    // Lista di credenziali di test (aggiungere altre coppie email/password)
+        List<String[]> credentials = List.of(
+            new String[]{"annapistorio@gmail.com", "anna04"},
+            new String[]{"margheritaursino@gmail.com", "marghe02"}
+        );
+
+        // Lista di query SQL per testare
+        List<String> testQueries = List.of(
+                "SELECT * FROM contenuto;",
+                "INSERT INTO playlist (email, nomePlaylist, num_tracce_P) VALUES ('margheritaursino@gmail.com', 'John Doe', 12);",
+                "UPDATE playlist SET num_tracce_P = 13 WHERE nomePlaylist = 'John Doe';",
+                "DELETE FROM playlist WHERE nomePlaylist = 'John Doe';"
+        );
+
+        // Ciclo su tutte le credenziali
+        for (String[] credential : credentials) {
+            String email = credential[0];
+            String password = credential[1];
+
+            System.out.println("\n=== Testing with email: " + email + " ===");
+            try (Socket socket = new Socket("127.0.0.1", 12345)) {
+                InputStream is = socket.getInputStream();
+                ObjectInputStream input = new ObjectInputStream(is);
+
+                OutputStream os = socket.getOutputStream();
+                ObjectOutputStream output = new ObjectOutputStream(os);
+                output.flush();
+
+                // Invio credenziali
+                output.writeObject(email);
+                output.writeObject(password);
+                output.flush();
+
+                // Controlla risposta di autenticazione
+                String response = (String) input.readObject();
+                System.out.println(response);
+
+                if (response.startsWith("Authentication successful")) {
+                    for (String query : testQueries) {
+                        System.out.println("Executing query: " + query);
+                        output.writeObject(query);
+                        output.flush();
+
+                        String result = (String) input.readObject();
+                        System.out.println("Query result:\n" + result);
+                    }
+
+                    // Comando di uscita
+                    output.writeObject("exit");
+                    output.flush();
+                    System.out.println("Exit...");
+                } else {
+                    System.out.println("Authentication failed for: " + email);
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                System.out.println("Error connecting to the server: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 }
