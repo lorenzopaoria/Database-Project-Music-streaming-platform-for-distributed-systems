@@ -17,13 +17,13 @@ import java.util.logging.Logger;
 
 public class DatabaseServer {
     private static final int PORT = 12345;
-    private static final int THREAD_POOL_SIZE = 10;
+    //private static final int THREAD_POOL_SIZE = 10;
     private static final Logger LOGGER = Logger.getLogger(DatabaseServer.class.getName());
     private static final DatabaseAuditLogger AUDIT_LOGGER = new DatabaseAuditLogger();
     private static final RoleBasedAccessControl ACCESS_CONTROL = new RoleBasedAccessControl();
 
     public static void main(String[] args) {
-        ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+        ExecutorService threadPool = Executors.newCachedThreadPool();// short live thread terminate in 60 seconds of inactivity for a long live thread but with limited number of threads use newFixedThreadPool(THREAD_POOL_SIZE)
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             LOGGER.info("Server listening on port " + PORT);

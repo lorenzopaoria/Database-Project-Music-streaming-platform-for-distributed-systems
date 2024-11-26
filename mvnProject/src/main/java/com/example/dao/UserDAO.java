@@ -46,7 +46,7 @@ public class UserDAO {
 
     private String executeSelectQuery(String query) throws SQLException {
         try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
+            ResultSet rs = stmt.executeQuery(query)) {
             
             StringBuilder result = new StringBuilder();
             ResultSetMetaData metaData = rs.getMetaData();
