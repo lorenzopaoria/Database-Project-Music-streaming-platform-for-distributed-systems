@@ -22,7 +22,7 @@ public class DatabaseProxy {
 
             return (String) input.readObject();
         } catch (Exception e) {
-            return "Errore durante la comunicazione con il server: " + e.getMessage();
+            return "Error communicating with the server:" + e.getMessage();
         }
     }
 }

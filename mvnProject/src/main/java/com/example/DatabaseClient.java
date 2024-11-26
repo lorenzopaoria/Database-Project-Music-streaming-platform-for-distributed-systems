@@ -9,38 +9,38 @@ public class DatabaseClient {
         Scanner scanner = new Scanner(System.in);
         
         try (Socket socket = new Socket("127.0.0.1", 12345)) {
-            // Create input stream first
+            // input stream first
             InputStream is = socket.getInputStream();
             ObjectInputStream input = new ObjectInputStream(is);
 
-            // Then create output stream
+            // create output stream
             OutputStream os = socket.getOutputStream();
             ObjectOutputStream output = new ObjectOutputStream(os);
             output.flush(); // Flush the stream header
 
-            System.out.println("Inserisci l'email: ");
+            System.out.println("Insert email: ");
             String email = scanner.nextLine();
-            System.out.println("Inserisci la password: ");
+            System.out.println("Insert password: ");
             String password = scanner.nextLine();
 
-            // Send authentication credentials
+            // send authentication credentials
             output.writeObject(email);
             output.writeObject(password);
-            output.flush();
+            output.flush(); // thread
 
-            // Read authentication response
+            // read authentication response
             String response = (String) input.readObject();
             System.out.println(response);
 
             if (response.startsWith("Authentication successful")) {
                 while (true) {
-                    System.out.println("Inserisci la query SQL o 'exit' per uscire:");
+                    System.out.println("Enter SQL query or 'exit' to exit:");
                     String query = scanner.nextLine();
                     
                     if ("exit".equalsIgnoreCase(query)) {
                         output.writeObject(query);
                         output.flush();
-                        System.out.println("Uscita...");
+                        System.out.println("Exit...");
                         break;
                     }
 
@@ -48,11 +48,11 @@ public class DatabaseClient {
                     output.flush();
 
                     String result = (String) input.readObject();
-                    System.out.println("Risultato della query:\n" + result);
+                    System.out.println("Query result:\n" + result);
                 }                
             }
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Errore nella connessione al server: " + e.getMessage());
+            System.out.println("Error connecting to the server:" + e.getMessage());
             e.printStackTrace();
         }
     }

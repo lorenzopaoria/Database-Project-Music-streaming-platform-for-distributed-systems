@@ -54,24 +54,24 @@ class ClientHandler implements Runnable {
     public void run() {
         Connection conn = null;
         try {
-            // Genera un ID utente casuale
+            // generete random usedId
             String userId = generateRandomUserId();
 
-            // Create output stream first
+            // create output stream 
             OutputStream os = clientSocket.getOutputStream();
             ObjectOutputStream output = new ObjectOutputStream(os);
             output.flush(); // Flush the stream header
 
-            // Then create input stream
+            // create input stream
             InputStream is = clientSocket.getInputStream();
             ObjectInputStream input = new ObjectInputStream(is);
 
-            // Establish database connection
+            // establish database connection
             conn = DatabaseFactory.getConnection();
 
             LOGGER.info("Handling client connection");
 
-            // Authentication
+            // authentication
             String email = (String) input.readObject();
             String password = (String) input.readObject();
 
@@ -84,14 +84,13 @@ class ClientHandler implements Runnable {
                 return;
             }
 
-            // Messaggio di benvenuto con ID utente
             String welcomeMessage = String.format("Authentication successful! Welcome, %s (User ID: %s)", role, userId);
             output.writeObject(welcomeMessage);
             output.flush();
 
             LOGGER.info(String.format("User %s (%s) authenticated with role %s", email, userId, role));
 
-            // Query processing loop
+            // query processing loop
             while (!Thread.currentThread().isInterrupted()) {
                 String query = (String) input.readObject();
                 LOGGER.info(String.format("User %s (%s) sent query: %s", email, userId, query));
@@ -122,7 +121,6 @@ class ClientHandler implements Runnable {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Database connection error", e);
         } finally {
-            // Close connection explicitly
             if (conn != null) {
                 try {
                     conn.close();
@@ -130,8 +128,6 @@ class ClientHandler implements Runnable {
                     LOGGER.log(Level.SEVERE, "Error closing database connection", e);
                 }
             }
-
-            // Close socket
             try {
                 if (!clientSocket.isClosed()) {
                     clientSocket.close();
@@ -141,10 +137,7 @@ class ClientHandler implements Runnable {
             }
         }
     }
-
-    // Metodo per generare un ID utente casuale
     private String generateRandomUserId() {
-        // Usa UUID per generare un ID univoco
         return UUID.randomUUID().toString().substring(0, 8);
     }
 }

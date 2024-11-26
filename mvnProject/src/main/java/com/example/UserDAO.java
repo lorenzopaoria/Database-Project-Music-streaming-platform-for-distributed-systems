@@ -28,20 +28,18 @@ public class UserDAO {
 
     public String executeQuery(String query) throws SQLException {
         if (query.trim().toUpperCase().startsWith("SELECT")) {
-            // Se la query è una SELECT, esegui executeQuery()
+            // se la query è una SELECT, esegui executeQuery()
             try (Statement stmt = connection.createStatement();
-                 ResultSet rs = stmt.executeQuery(query)) {
+                ResultSet rs = stmt.executeQuery(query)) {
                 StringBuilder result = new StringBuilder();
                 ResultSetMetaData metaData = rs.getMetaData();
                 int columnCount = metaData.getColumnCount();
 
                 List<String[]> rows = new ArrayList<>();
                 int[] columnWidths = new int[columnCount];
-                // Inizializza le larghezze con i nomi delle colonne
                 for (int i = 1; i <= columnCount; i++) {
                     columnWidths[i - 1] = metaData.getColumnName(i).length();
                 }
-                // Leggi i dati dal ResultSet e aggiorna le larghezze
                 while (rs.next()) {
                     String[] row = new String[columnCount];
                     for (int i = 1; i <= columnCount; i++) {
@@ -51,19 +49,16 @@ public class UserDAO {
                     }
                     rows.add(row);
                 }
-                // Formatta l'intestazione
                 for (int i = 1; i <= columnCount; i++) {
                     result.append(String.format("%-" + columnWidths[i - 1] + "s", metaData.getColumnName(i))).append("\t");
                 }
                 result.append("\n");
 
-                // Separatore
                 for (int width : columnWidths) {
                     result.append("-".repeat(width)).append("\t");
                 }
                 result.append("\n");
 
-                // Formatta i dati
                 for (String[] row : rows) {
                     for (int i = 0; i < columnCount; i++) {
                         result.append(String.format("%-" + columnWidths[i] + "s", row[i])).append("\t");
@@ -73,10 +68,10 @@ public class UserDAO {
                 return result.toString();
             }
         } else {
-            // Se la query non è una SELECT, usiamo executeUpdate() (ad esempio per DROP, INSERT, UPDATE)
+            // se la query non è una SELECT, usiamo executeUpdate() (es: DROP, INSERT, UPDATE)
             try (Statement stmt = connection.createStatement()) {
                 int rowsAffected = stmt.executeUpdate(query);
-                return "Query eseguita con successo. " + rowsAffected + " righe interessate.";
+                return "Query executed successfully. " + rowsAffected + " affected lines.";
             }
         }
     }
