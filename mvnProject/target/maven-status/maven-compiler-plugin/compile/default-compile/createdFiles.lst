@@ -1,9 +1,12 @@
-com\example\DatabaseClient.class
 com\example\DatabaseProxy.class
 com\example\AccessControl.class
+com\example\QueryGUI.class
 com\example\security\RoleBasedAccessControl.class
-com\example\DatabaseServer.class
-com\example\dao\UserDAO.class
 com\example\factory\DatabaseFactory.class
 com\example\DatabaseServer$ClientHandler.class
+com\example\DatabaseClient.class
+com\example\QueryGUI$1.class
+com\example\QueryGUI$2.class
+com\example\DatabaseServer.class
+com\example\dao\UserDAO.class
 com\example\logging\DatabaseAuditLogger.class
