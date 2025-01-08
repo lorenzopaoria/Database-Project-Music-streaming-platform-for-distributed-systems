@@ -53,13 +53,11 @@ public class DatabaseClient {
             e.printStackTrace();
         }
     }*/
-    // Lista di credenziali di test (aggiungere altre coppie email/password)
         List<String[]> credentials = List.of(
             new String[]{"annapistorio@gmail.com", "anna04"},
             new String[]{"margheritaursino@gmail.com", "marghe02"}
         );
 
-        // Lista di query SQL per testare
         List<String> testQueries = List.of(
                 "SELECT * FROM contenuto;",
                 "INSERT INTO playlist (email, nomePlaylist, num_tracce_P) VALUES ('margheritaursino@gmail.com', 'John Doe', 12);",
@@ -67,7 +65,6 @@ public class DatabaseClient {
                 "DELETE FROM playlist WHERE nomePlaylist = 'John Doe';"
         );
 
-        // Ciclo su tutte le credenziali
         for (String[] credential : credentials) {
             String email = credential[0];
             String password = credential[1];
@@ -81,12 +78,10 @@ public class DatabaseClient {
                 ObjectOutputStream output = new ObjectOutputStream(os);
                 output.flush();
 
-                // Invio credenziali
                 output.writeObject(email);
                 output.writeObject(password);
                 output.flush();
 
-                // Controlla risposta di autenticazione
                 String response = (String) input.readObject();
                 System.out.println(response);
 
@@ -100,7 +95,6 @@ public class DatabaseClient {
                         System.out.println("Query result:\n" + result);
                     }
 
-                    // Comando di uscita
                     output.writeObject("exit");
                     output.flush();
                     System.out.println("Exit...");
