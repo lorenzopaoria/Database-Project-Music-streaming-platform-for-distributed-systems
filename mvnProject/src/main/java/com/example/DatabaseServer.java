@@ -4,7 +4,6 @@ import com.example.dao.UserDAO;
 import com.example.factory.DatabaseFactory;
 import com.example.logging.DatabaseAuditLogger;
 import com.example.security.RoleBasedAccessControl;
-
 import java.io.*;
 import java.net.*;
 import java.sql.Connection;
@@ -15,11 +14,12 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DatabaseServer {
+public class DatabaseServer{    
+    
     private static final int PORT = 12345;
     //private static final int THREAD_POOL_SIZE = 10;
     private static final Logger LOGGER = Logger.getLogger(DatabaseServer.class.getName());
-    private static final DatabaseAuditLogger AUDIT_LOGGER = new DatabaseAuditLogger();
+    //private static final DatabaseAuditLogger AUDIT_LOGGER = new DatabaseAuditLogger();
     private static final RoleBasedAccessControl ACCESS_CONTROL = new RoleBasedAccessControl();
 
     public static void main(String[] args) {

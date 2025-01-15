@@ -1,15 +1,13 @@
 package com.example;
 
 import com.formdev.flatlaf.FlatLightLaf;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Clipboard;
 import java.io.*;
 import java.net.Socket;
 
@@ -157,7 +155,7 @@ public class QueryGUI {
         frame.setLocationRelativeTo(null);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(240, 248, 255)); // Light blue background
+        mainPanel.setBackground(new Color(240, 248, 255));
 
         JTextField queryField = new JTextField();
         queryField.setBorder(BorderFactory.createTitledBorder("Enter SQL Query"));
@@ -168,6 +166,12 @@ public class QueryGUI {
         sendButton.setForeground(Color.WHITE);
         sendButton.setFocusPainted(false);
         sendButton.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JButton copyButton = new JButton("Copy Results");
+        copyButton.setBackground(new Color(40, 167, 69));  // Verde
+        copyButton.setForeground(Color.WHITE);
+        copyButton.setFocusPainted(false);
+        copyButton.setFont(new Font("Arial", Font.BOLD, 14));
 
         JTextArea resultArea = new JTextArea();
         resultArea.setEditable(false);
@@ -180,10 +184,15 @@ public class QueryGUI {
         JLabel statusLabel = new JLabel("Connected", SwingConstants.LEFT);
         statusLabel.setForeground(new Color(0, 128, 0));
 
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setBackground(new Color(240, 248, 255));
+        buttonPanel.add(copyButton);
+        buttonPanel.add(sendButton);
+
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new BorderLayout());
         inputPanel.add(queryField, BorderLayout.CENTER);
-        inputPanel.add(sendButton, BorderLayout.EAST);
+        inputPanel.add(buttonPanel, BorderLayout.EAST);
 
         mainPanel.add(inputPanel, BorderLayout.NORTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
@@ -192,7 +201,7 @@ public class QueryGUI {
         frame.add(mainPanel);
         frame.setVisible(true);
 
-        sendButton.addActionListener(new ActionListener() {
+        ActionListener queryActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String query = queryField.getText();
@@ -231,6 +240,40 @@ public class QueryGUI {
                 } catch (IOException | ClassNotFoundException ex) {
                     JOptionPane.showMessageDialog(frame, "Error sending query: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
+            }
+        };
+        sendButton.addActionListener(queryActionListener);
+        queryField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    queryActionListener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                }
+            }
+        });
+        copyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String textToCopy = resultArea.getText();
+                if (!textToCopy.isEmpty()) {
+                    StringSelection stringSelection = new StringSelection(textToCopy);
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard.setContents(stringSelection, null);
+                    JOptionPane.showMessageDialog(frame, "Results copied to clipboard!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "No results to copy!", "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+        copyButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                copyButton.setBackground(new Color(33, 136, 56));  // Darker green on hover
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                copyButton.setBackground(new Color(40, 167, 69));  // Original green
             }
         });
     }
