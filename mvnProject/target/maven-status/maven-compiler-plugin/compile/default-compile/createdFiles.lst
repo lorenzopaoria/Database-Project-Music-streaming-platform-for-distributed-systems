@@ -1,3 +1,4 @@
+com\example\security\DatabaseAuthenticator.class
 com\example\QueryGUI$4.class
 com\example\DatabaseProxy.class
 com\example\QueryGUI$3$1.class
@@ -7,8 +8,11 @@ com\example\QueryGUI$5.class
 com\example\QueryGUI.class
 com\example\security\RoleBasedAccessControl.class
 com\example\QueryGUI$3.class
+com\example\security\AuthenticatorFactory.class
 com\example\factory\DatabaseFactory.class
+com\example\security\AuthenticationResult.class
 com\example\DatabaseServer$ClientHandler.class
+com\example\security\Authenticator.class
 com\example\DatabaseClient.class
 com\example\QueryGUI$1.class
 com\example\QueryGUI$2.class
