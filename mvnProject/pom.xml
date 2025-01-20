@@ -43,6 +43,12 @@
             <artifactId>HikariCP</artifactId>
             <version>${hikaricp.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.1</version>
+        </dependency>
         
         <!-- Logging -->
         <dependency>
@@ -120,7 +126,7 @@
             </properties>
         </profile>
         
-        <profile>
+        <!--<profile>
             <id>client</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -144,7 +150,7 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
+        </profile>-->
     </profiles>
     
     <build>

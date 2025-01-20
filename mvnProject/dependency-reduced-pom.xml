@@ -91,28 +91,6 @@
         <jdbc.url>jdbc:mysql://localhost:3306/piattaforma_streaming_musicale</jdbc.url>
       </properties>
     </profile>
-    <profile>
-      <id>client</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>3.1.0</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>java</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <mainClass>com.example.DatabaseClient</mainClass>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
   </profiles>
   <properties>
     <hikaricp.version>5.0.1</hikaricp.version>

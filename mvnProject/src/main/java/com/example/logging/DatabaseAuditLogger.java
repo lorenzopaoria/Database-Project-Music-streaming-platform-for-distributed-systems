@@ -1,18 +1,31 @@
 package com.example.logging;
 
+import java.time.LocalDateTime;
+import java.util.logging.FileHandler;
 import java.util.logging.Logger;
-import java.util.logging.Level;
+import java.util.logging.SimpleFormatter;
 
 public class DatabaseAuditLogger {
-    private static final Logger LOGGER = Logger.getLogger(DatabaseAuditLogger.class.getName());
+    private final Logger logger;
 
-    public void logAuthentication(String email, boolean success) {
-        String status = success ? "successful" : "failed";
-        LOGGER.info(String.format("Authentication %s for email: %s", status, email));
+    public DatabaseAuditLogger() {
+        this.logger = Logger.getLogger("DatabaseAudit");
+        try {
+            FileHandler fh = new FileHandler("database_audit.log", true);
+            fh.setFormatter(new SimpleFormatter());
+            logger.addHandler(fh);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize audit logger", e);
+        }
     }
 
-    public void logQueryExecution(String userId, String query, boolean success) {
-        String status = success ? "successful" : "failed";
-        LOGGER.info(String.format("Query %s - User: %s, Query: %s", status, userId, query));
+    public void logAuthentication(String clientId, String email, boolean success) {
+        logger.info(String.format("[%s] Authentication attempt - Client: %s, User: %s, Success: %s",
+            LocalDateTime.now(), clientId, email, success));
+    }
+
+    public void logQuery(String sessionId, String query, boolean success) {
+        logger.info(String.format("[%s] Query execution - Session: %s, Query: %s, Success: %s",
+            LocalDateTime.now(), sessionId, query, success));
     }
 }

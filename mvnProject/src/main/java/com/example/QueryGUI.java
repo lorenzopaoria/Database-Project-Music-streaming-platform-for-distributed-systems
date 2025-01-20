@@ -1,280 +1,232 @@
 package com.example;
 
+import com.example.proxy.DatabaseProxy;
 import com.formdev.flatlaf.FlatLightLaf;
+
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Clipboard;
-import java.io.*;
-import java.net.Socket;
 
 public class QueryGUI {
+    private final DatabaseProxy databaseProxy;
+    private JFrame mainFrame;
+    private JTextArea resultArea;
+    private JTextField queryField;
+    private JTextField emailField;
+    private JPasswordField passwordField;
 
-    public static void main(String[] args) {
-        FlatLightLaf.setup();
-
-        SwingUtilities.invokeLater(QueryGUI::createLoginFrame);
+    public QueryGUI() {
+        this.databaseProxy = new DatabaseProxy();
+        createLoginFrame();
     }
 
-    private static void createLoginFrame() {
-        JFrame loginFrame = new JFrame("Login");
-        loginFrame.setSize(400, 350);
+    private void createLoginFrame() {
+        JFrame loginFrame = new JFrame("Database Login");
+        loginFrame.setSize(400, 300);
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        loginFrame.setUndecorated(true);
+        
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
 
-        JPanel loginPanel = new JPanel();
-        loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.Y_AXIS));
-        loginPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        loginPanel.setBackground(new Color(240, 248, 255)); // Light blue background
-
-        JLabel titleLabel = new JLabel("Database Query Tool", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
-        titleLabel.setForeground(new Color(0, 123, 255)); // Azzurro
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JTextField emailField = new JTextField(15);
-        emailField.setMaximumSize(new Dimension(300, 40));
-        emailField.setBorder(BorderFactory.createTitledBorder("Email"));
-
-        JPasswordField passwordField = new JPasswordField(15);
-        passwordField.setMaximumSize(new Dimension(300, 40));
-        passwordField.setBorder(BorderFactory.createTitledBorder("Password"));
-
+        emailField = new JTextField(20);
+        passwordField = new JPasswordField(20);
         JButton loginButton = new JButton("Login");
-        loginButton.setBackground(new Color(0, 123, 255)); // Azzurro
-        loginButton.setForeground(Color.WHITE);
-        loginButton.setFont(new Font("Arial", Font.BOLD, 14));
-        loginButton.setFocusPainted(false);
-        loginButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel statusLabel = new JLabel(" ");
+        
+        // Add enter key listener for email field
+        emailField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    passwordField.requestFocus();
+                }
+            }
+        });
 
-        JLabel statusLabel = new JLabel(" ", SwingConstants.CENTER);
-        statusLabel.setForeground(Color.RED);
-        statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Add enter key listener for password field
+        passwordField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    loginButton.doClick();
+                }
+            }
+        });
 
-        loginPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        loginPanel.add(titleLabel);
-        loginPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        loginPanel.add(emailField);
-        loginPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        loginPanel.add(passwordField);
-        loginPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        loginPanel.add(loginButton);
-        loginPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        loginPanel.add(statusLabel);
+        loginButton.addActionListener(e -> {
+            try {
+                String response = databaseProxy.authenticate(
+                    emailField.getText(), 
+                    new String(passwordField.getPassword())
+                );
+                
+                if (response.startsWith("Authentication successful")) {
+                    loginFrame.dispose();
+                    createMainFrame();
+                } else {
+                    statusLabel.setText(response);
+                }
+            } catch (Exception ex) {
+                statusLabel.setText("Login failed: " + ex.getMessage());
+            }
+        });
 
-        loginFrame.add(loginPanel);
+        // Add components to panel
+        gbc.gridx = 0; gbc.gridy = 0;
+        panel.add(new JLabel("Email:"), gbc);
+        gbc.gridx = 1;
+        panel.add(emailField, gbc);
+        gbc.gridx = 0; gbc.gridy = 1;
+        panel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 1;
+        panel.add(passwordField, gbc);
+        gbc.gridx = 1; gbc.gridy = 2;
+        panel.add(loginButton, gbc);
+        gbc.gridy = 3;
+        panel.add(statusLabel, gbc);
+
+        loginFrame.add(panel);
         loginFrame.setLocationRelativeTo(null);
         loginFrame.setVisible(true);
-
-        loginButton.addMouseListener(new MouseAdapter() {
-            Timer hoverTimer;
-            int alpha = 255;
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                hoverTimer = new Timer(10, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        alpha = Math.max(200, alpha - 5);
-                        loginButton.setBackground(new Color(0, 123, 255, alpha));
-                        if (alpha == 200) hoverTimer.stop();
-                    }
-                });
-                hoverTimer.start();
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                hoverTimer = new Timer(10, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        alpha = Math.min(255, alpha + 5);
-                        loginButton.setBackground(new Color(0, 123, 255, alpha));
-                        if (alpha == 255) hoverTimer.stop();
-                    }
-                });
-                hoverTimer.start();
-            }
-        });
-
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String email = emailField.getText();
-                String password = new String(passwordField.getPassword());
-
-                try {
-                    Socket socket = new Socket("127.0.0.1", 12345);
-                    ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-                    ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-                    output.flush();
-
-                    output.writeObject(email);
-                    output.writeObject(password);
-                    output.flush();
-
-                    String response = (String) input.readObject();
-
-                    if (response.startsWith("Authentication successful")) {
-                        statusLabel.setForeground(Color.GREEN);
-                        statusLabel.setText("Login successful!");
-
-                        JProgressBar progressBar = new JProgressBar();
-                        progressBar.setIndeterminate(true);
-                        progressBar.setForeground(new Color(0, 123, 255));
-                        progressBar.setBackground(Color.WHITE);
-                        loginPanel.add(progressBar);
-                        loginPanel.revalidate();
-                        loginPanel.repaint();
-
-                        Timer timer = new Timer(1500, actionEvent -> {
-                            loginFrame.dispose();
-                            showQueryGUI(socket, output, input);
-                        });
-                        timer.setRepeats(false);
-                        timer.start();
-                    } else {
-                        statusLabel.setForeground(Color.RED);
-                        statusLabel.setText("Login failed: " + response);
-                    }
-                } catch (IOException | ClassNotFoundException ex) {
-                    statusLabel.setForeground(Color.RED);
-                    statusLabel.setText("Error: " + ex.getMessage());
-                }
-            }
-        });
     }
 
-    private static void showQueryGUI(Socket socket, ObjectOutputStream output, ObjectInputStream input) {
-        JFrame frame = new JFrame("Database Query GUI");
-        frame.setSize(700, 500);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
+    private void createMainFrame() {
+        mainFrame = new JFrame("Database Query Interface");
+        mainFrame.setSize(800, 600);
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(240, 248, 255));
-
-        JTextField queryField = new JTextField();
-        queryField.setBorder(BorderFactory.createTitledBorder("Enter SQL Query"));
-        queryField.setFont(new Font("Arial", Font.PLAIN, 14));
-
-        JButton sendButton = new JButton("Send Query");
-        sendButton.setBackground(new Color(0, 123, 255));
-        sendButton.setForeground(Color.WHITE);
-        sendButton.setFocusPainted(false);
-        sendButton.setFont(new Font("Arial", Font.BOLD, 14));
-
-        JButton copyButton = new JButton("Copy Results");
-        copyButton.setBackground(new Color(40, 167, 69));  // Verde
-        copyButton.setForeground(Color.WHITE);
-        copyButton.setFocusPainted(false);
-        copyButton.setFont(new Font("Arial", Font.BOLD, 14));
-
-        JTextArea resultArea = new JTextArea();
+        queryField = new JTextField();
+        resultArea = new JTextArea();
         resultArea.setEditable(false);
-        resultArea.setFont(new Font("Courier New", Font.PLAIN, 14));
-        resultArea.setBorder(BorderFactory.createTitledBorder("Query Results"));
-        JScrollPane scrollPane = new JScrollPane(resultArea);
-
-        ((DefaultCaret) resultArea.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-
-        JLabel statusLabel = new JLabel("Connected", SwingConstants.LEFT);
-        statusLabel.setForeground(new Color(0, 128, 0));
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.setBackground(new Color(240, 248, 255));
-        buttonPanel.add(copyButton);
-        buttonPanel.add(sendButton);
-
-        JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new BorderLayout());
-        inputPanel.add(queryField, BorderLayout.CENTER);
-        inputPanel.add(buttonPanel, BorderLayout.EAST);
-
-        mainPanel.add(inputPanel, BorderLayout.NORTH);
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
-        mainPanel.add(statusLabel, BorderLayout.SOUTH);
-
-        frame.add(mainPanel);
-        frame.setVisible(true);
-
-        ActionListener queryActionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String query = queryField.getText();
-                if (query.isEmpty()) {
-                    JOptionPane.showMessageDialog(frame, "Please enter a query.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                try {
-                    output.writeObject(query);
-                    output.flush();
-
-                    if ("exit".equalsIgnoreCase(query)) {
-                        statusLabel.setText("Disconnected");
-                        socket.close();
-                        frame.dispose();
-                        return;
-                    }
-
-                    String result = (String) input.readObject();
-                    resultArea.append("Query: " + query + "\n");
-                    resultArea.append("Result:\n" + result + "\n\n");
-
-                    Timer scrollTimer = new Timer(15, new ActionListener() {
-                        int scrollPos = scrollPane.getVerticalScrollBar().getValue();
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            scrollPane.getVerticalScrollBar().setValue(scrollPos += 10);
-                            if (scrollPos >= scrollPane.getVerticalScrollBar().getMaximum()) {
-                                ((Timer) e.getSource()).stop();
-                            }
-                        }
-                    });
-                    scrollTimer.start();
-                } catch (IOException | ClassNotFoundException ex) {
-                    JOptionPane.showMessageDialog(frame, "Error sending query: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        };
-        sendButton.addActionListener(queryActionListener);
+        resultArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        
+        JButton executeButton = new JButton("Execute Query");
+        JButton copyButton = new JButton("Copy Results");
+        
+        // Add enter key listener for query field
         queryField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    queryActionListener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                    executeQuery();
                 }
             }
         });
-        copyButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String textToCopy = resultArea.getText();
-                if (!textToCopy.isEmpty()) {
-                    StringSelection stringSelection = new StringSelection(textToCopy);
-                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    clipboard.setContents(stringSelection, null);
-                    JOptionPane.showMessageDialog(frame, "Results copied to clipboard!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(frame, "No results to copy!", "Warning", JOptionPane.WARNING_MESSAGE);
-                }
-            }
-        });
-        copyButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                copyButton.setBackground(new Color(33, 136, 56));  // Darker green on hover
-            }
 
+        executeButton.addActionListener(e -> executeQuery());
+        
+        copyButton.addActionListener(e -> {
+            StringSelection stringSelection = new StringSelection(resultArea.getText());
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(stringSelection, null);
+            JOptionPane.showMessageDialog(mainFrame, "Results copied to clipboard!");
+        });
+
+        mainFrame.setLayout(new BorderLayout());
+        JPanel topPanel = new JPanel(new BorderLayout());
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.add(executeButton);
+        buttonPanel.add(copyButton);
+        
+        topPanel.add(queryField, BorderLayout.CENTER);
+        topPanel.add(buttonPanel, BorderLayout.EAST);
+
+        // Add padding to the result area
+        JPanel resultPanel = new JPanel(new BorderLayout());
+        resultPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        resultPanel.add(new JScrollPane(resultArea), BorderLayout.CENTER);
+
+        mainFrame.add(topPanel, BorderLayout.NORTH);
+        mainFrame.add(resultPanel, BorderLayout.CENTER);
+
+        mainFrame.addWindowListener(new WindowAdapter() {
             @Override
-            public void mouseExited(MouseEvent e) {
-                copyButton.setBackground(new Color(40, 167, 69));  // Original green
+            public void windowClosing(WindowEvent e) {
+                databaseProxy.close();
             }
         });
+
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setVisible(true);
+    }
+
+    private void executeQuery() {
+        String query = queryField.getText();
+        if (query.isEmpty()) {
+            JOptionPane.showMessageDialog(mainFrame, "Please enter a query");
+            return;
+        }
+
+        try {
+            String result = databaseProxy.executeQuery(query);
+            // Format the result with proper column alignment
+            String formattedResult = formatQueryResult(result);
+            resultArea.setText(formattedResult);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(mainFrame, "Error executing query: " + e.getMessage());
+        }
+    }
+
+    private String formatQueryResult(String result) {
+        if (result == null || result.isEmpty()) return "";
+        
+        String[] lines = result.split("\n");
+        if (lines.length < 2) return result;
+
+        // Split the header and find the maximum width for each column
+        String[] headers = lines[0].split("\t");
+        int[] maxWidths = new int[headers.length];
+        
+        // Initialize with header lengths
+        for (int i = 0; i < headers.length; i++) {
+            maxWidths[i] = headers[i].length();
+        }
+        
+        // Find maximum widths considering all rows
+        for (int i = 1; i < lines.length; i++) {
+            String[] cells = lines[i].split("\t");
+            for (int j = 0; j < cells.length && j < maxWidths.length; j++) {
+                maxWidths[j] = Math.max(maxWidths[j], cells[j].length());
+            }
+        }
+        
+        // Build the formatted result
+        StringBuilder formatted = new StringBuilder();
+        
+        // Add headers
+        for (int i = 0; i < headers.length; i++) {
+            formatted.append(padRight(headers[i], maxWidths[i])).append("  ");
+        }
+        formatted.append("\n");
+        
+        // Add separator line
+        for (int width : maxWidths) {
+            formatted.append("-".repeat(width)).append("  ");
+        }
+        formatted.append("\n");
+        
+        // Add data rows
+        for (int i = 1; i < lines.length; i++) {
+            String[] cells = lines[i].split("\t");
+            for (int j = 0; j < cells.length && j < maxWidths.length; j++) {
+                formatted.append(padRight(cells[j], maxWidths[j])).append("  ");
+            }
+            formatted.append("\n");
+        }
+        
+        return formatted.toString();
+    }
+
+    private String padRight(String s, int n) {
+        return String.format("%-" + n + "s", s);
+    }
+
+    public static void main(String[] args) {
+        FlatLightLaf.setup();
+        SwingUtilities.invokeLater(() -> new QueryGUI());
     }
 }
