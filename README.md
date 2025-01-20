@@ -1,4 +1,7 @@
-![Uploading queryGUI.jpg…]()
+<div align="center">
+  <img src="https://github.com/lorenzopaoria/Database-Project-Music-streaming-platform-for-distributed-systems/blob/782580af99781b09be5cf8dcae8d5e75fc36bc91/Photo/queryGUI.jpg"/>
+</div>
+
 # Music Streaming Platform Database Project for distributed systems
 
 This repository contains the files for a database project that models a music streaming platform. The goal of this project is to design and implement a relational database schema that can effectively store and manage data related to users, artists, songs, playlists, and other essential entities in a music streaming application. All of this with the implementation of a distributed system using Maven, along with its management for the database created.
