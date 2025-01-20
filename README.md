@@ -1,4 +1,4 @@
-![Logo del progetto](Photo/QueryGUI.png)
+![Logo del progetto](Photo/queryGUI.png)
 
 # Music Streaming Platform Database Project for distributed systems
 
