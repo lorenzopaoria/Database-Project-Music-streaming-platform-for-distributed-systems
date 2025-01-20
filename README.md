@@ -1,4 +1,4 @@
-![Logo del progetto](Photo/queryGUI.png)
+![Logo del progetto](https://github.com/lorenzopaoria/Database-Project-Music-streaming-platform-for-distributed-systems/tree/d35a23765f7862f2ead36db3609fdbb66aabb86b/Photo)
 
 # Music Streaming Platform Database Project for distributed systems
 
