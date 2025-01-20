@@ -6,6 +6,8 @@ import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+
 import javax.swing.border.EmptyBorder;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Clipboard;
@@ -25,19 +27,42 @@ public class QueryGUI {
 
     private void createLoginFrame() {
         JFrame loginFrame = new JFrame("Database Login");
-        loginFrame.setSize(400, 300);
+        loginFrame.setSize(400, 400); 
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
+    
+        ImageIcon logoIcon = new ImageIcon("src\\main\\java\\com\\example\\queryGUI.png");
+        File imageFile = new File("queryGUI.png");
+        //debugg
+        System.out.println("Percorso di lavoro corrente: " + System.getProperty("user.dir"));
+        if (!imageFile.exists()) {
+            System.err.println("Il file dell'immagine non esiste!");
+        } else {
+            System.out.println("Il file dell'immagine esiste.");
+        }
 
+        if (logoIcon.getIconWidth() == -1) {
+            System.err.println("Errore: Immagine non trovata!");
+        } else {
+            System.out.println("Immagine caricata correttamente!");
+        }       
+        //fine debuggg 
+        // Ridimensiona l'immagine
+        Image image = logoIcon.getImage();
+        Image scaledImage = image.getScaledInstance(600, 500, Image.SCALE_SMOOTH);  // Imposta la larghezza a 200 e l'altezza a 100
+        ImageIcon scaledIcon = new ImageIcon(scaledImage);  // Crea un nuovo ImageIcon con l'immagine ridimensionata
+
+        // Aggiungi l'immagine ridimensionata
+        JLabel logoLabel = new JLabel(scaledIcon);
+    
         emailField = new JTextField(20);
         passwordField = new JPasswordField(20);
         JButton loginButton = new JButton("Login");
         JLabel statusLabel = new JLabel(" ");
-        
-        // Add enter key listener for email field
+    
         emailField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -46,8 +71,7 @@ public class QueryGUI {
                 }
             }
         });
-
-        // Add enter key listener for password field
+    
         passwordField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -56,7 +80,7 @@ public class QueryGUI {
                 }
             }
         });
-
+    
         loginButton.addActionListener(e -> {
             try {
                 String response = databaseProxy.authenticate(
@@ -74,25 +98,31 @@ public class QueryGUI {
                 statusLabel.setText("Login failed: " + ex.getMessage());
             }
         });
-
-        // Add components to panel
-        gbc.gridx = 0; gbc.gridy = 0;
+    
+        // Add components with proper grid positions
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        panel.add(logoLabel, gbc);
+    
+        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 1;
         panel.add(new JLabel("Email:"), gbc);
         gbc.gridx = 1;
         panel.add(emailField, gbc);
-        gbc.gridx = 0; gbc.gridy = 1;
+        
+        gbc.gridx = 0; gbc.gridy = 2;
         panel.add(new JLabel("Password:"), gbc);
         gbc.gridx = 1;
         panel.add(passwordField, gbc);
-        gbc.gridx = 1; gbc.gridy = 2;
+    
+        gbc.gridx = 1; gbc.gridy = 3;
         panel.add(loginButton, gbc);
-        gbc.gridy = 3;
+        
+        gbc.gridy = 4;
         panel.add(statusLabel, gbc);
-
+    
         loginFrame.add(panel);
         loginFrame.setLocationRelativeTo(null);
         loginFrame.setVisible(true);
-    }
+    }    
 
     private void createMainFrame() {
         mainFrame = new JFrame("Database Query Interface");
@@ -106,8 +136,6 @@ public class QueryGUI {
         
         JButton executeButton = new JButton("Execute Query");
         JButton copyButton = new JButton("Copy Results");
-        
-        // Add enter key listener for query field
         queryField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -135,7 +163,6 @@ public class QueryGUI {
         topPanel.add(queryField, BorderLayout.CENTER);
         topPanel.add(buttonPanel, BorderLayout.EAST);
 
-        // Add padding to the result area
         JPanel resultPanel = new JPanel(new BorderLayout());
         resultPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         resultPanel.add(new JScrollPane(resultArea), BorderLayout.CENTER);
@@ -163,7 +190,6 @@ public class QueryGUI {
 
         try {
             String result = databaseProxy.executeQuery(query);
-            // Format the result with proper column alignment
             String formattedResult = formatQueryResult(result);
             resultArea.setText(formattedResult);
         } catch (Exception e) {
@@ -177,39 +203,26 @@ public class QueryGUI {
         String[] lines = result.split("\n");
         if (lines.length < 2) return result;
 
-        // Split the header and find the maximum width for each column
         String[] headers = lines[0].split("\t");
         int[] maxWidths = new int[headers.length];
-        
-        // Initialize with header lengths
         for (int i = 0; i < headers.length; i++) {
             maxWidths[i] = headers[i].length();
         }
-        
-        // Find maximum widths considering all rows
         for (int i = 1; i < lines.length; i++) {
             String[] cells = lines[i].split("\t");
             for (int j = 0; j < cells.length && j < maxWidths.length; j++) {
                 maxWidths[j] = Math.max(maxWidths[j], cells[j].length());
             }
         }
-        
-        // Build the formatted result
         StringBuilder formatted = new StringBuilder();
-        
-        // Add headers
         for (int i = 0; i < headers.length; i++) {
             formatted.append(padRight(headers[i], maxWidths[i])).append("  ");
         }
         formatted.append("\n");
-        
-        // Add separator line
         for (int width : maxWidths) {
             formatted.append("-".repeat(width)).append("  ");
         }
         formatted.append("\n");
-        
-        // Add data rows
         for (int i = 1; i < lines.length; i++) {
             String[] cells = lines[i].split("\t");
             for (int j = 0; j < cells.length && j < maxWidths.length; j++) {

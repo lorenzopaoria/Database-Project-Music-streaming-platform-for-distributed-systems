@@ -103,14 +103,12 @@ public class DatabaseServer {
         adminRole.addPermission(new Permission("DROP", "*"));
         roles.put("admin", adminRole);
 
-        // Initialize premium role
         Role premiumRole = new Role("premium");
         premiumRole.addPermission(new Permission("SELECT", "*"));
         premiumRole.addPermission(new Permission("INSERT", "*"));
         premiumRole.addPermission(new Permission("UPDATE", "*"));
         roles.put("premium", premiumRole);
 
-        // Initialize free role
         Role freeRole = new Role("free");
         freeRole.addPermission(new Permission("SELECT", "*"));
         roles.put("free", freeRole);
