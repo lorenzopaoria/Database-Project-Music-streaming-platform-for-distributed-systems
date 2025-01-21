@@ -119,6 +119,7 @@ public class DatabaseServer {
         private final DatabaseServer server;
         private ObjectInputStream input;
         private ObjectOutputStream output;
+        @SuppressWarnings("unused")
         private Session session;
         private String clientId;
 

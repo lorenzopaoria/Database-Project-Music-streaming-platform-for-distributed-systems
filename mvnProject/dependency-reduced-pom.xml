@@ -27,9 +27,21 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/MANIFEST.MF</exclude>
+                  </excludes>
+                </filter>
+              </filters>
               <transformers>
                 <transformer>
                   <mainClass>com.example.DatabaseServer</mainClass>
+                </transformer>
+                <transformer />
+                <transformer>
+                  <resource>META-INF/services/*</resource>
                 </transformer>
               </transformers>
             </configuration>
