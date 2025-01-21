@@ -35,8 +35,8 @@ public class QueryGUI {
         gbc.insets = new Insets(5, 5, 5, 5);
     
         ImageIcon logoIcon = new ImageIcon("src\\main\\java\\com\\example\\queryGUI.png");
-        File imageFile = new File("queryGUI.png");
-        //debugg
+        //File imageFile = new File("queryGUI.png");
+        /*//debugg
         System.out.println("Percorso di lavoro corrente: " + System.getProperty("user.dir"));
         if (!imageFile.exists()) {
             System.err.println("Il file dell'immagine non esiste!");
@@ -49,13 +49,10 @@ public class QueryGUI {
         } else {
             System.out.println("Immagine caricata correttamente!");
         }       
-        //fine debuggg 
-        // Ridimensiona l'immagine
+        //fine debuggg */
         Image image = logoIcon.getImage();
-        Image scaledImage = image.getScaledInstance(600, 500, Image.SCALE_SMOOTH);  // Imposta la larghezza a 200 e l'altezza a 100
-        ImageIcon scaledIcon = new ImageIcon(scaledImage);  // Crea un nuovo ImageIcon con l'immagine ridimensionata
-
-        // Aggiungi l'immagine ridimensionata
+        Image scaledImage = image.getScaledInstance(600, 500, Image.SCALE_SMOOTH); 
+        ImageIcon scaledIcon = new ImageIcon(scaledImage); 
         JLabel logoLabel = new JLabel(scaledIcon);
     
         emailField = new JTextField(20);
