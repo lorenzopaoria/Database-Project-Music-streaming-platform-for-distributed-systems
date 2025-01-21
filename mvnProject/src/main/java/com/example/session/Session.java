@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public class Session {
     private final String sessionId;
+    @SuppressWarnings("all")
     private final String userId;
     private final Set<Role> activeRoles;
     private LocalDateTime lastAccessTime;
