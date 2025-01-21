@@ -6,7 +6,6 @@ import com.example.session.Session;
 import com.example.dao.UserDAO;
 import com.example.factory.DatabaseFactory;
 import com.example.logging.DatabaseAuditLogger;
-
 import java.io.*;
 import java.net.*;
 import java.sql.*;
@@ -75,11 +74,16 @@ public class DatabaseServer {
                 threadPool.shutdownNow();
             }
             DatabaseFactory.getConnection().close();
+    
+            // Chiusura corretta del logger di audit
+            auditLogger.closeLogger();
+            LOGGER.info("Audit logger closed.");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error during server shutdown", e);
             threadPool.shutdownNow();
         }
     }
+    
 
     public Role getRole(String roleName) {
         return roles.get(roleName);

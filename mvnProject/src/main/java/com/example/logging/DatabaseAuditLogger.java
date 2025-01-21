@@ -7,29 +7,32 @@ import java.util.logging.SimpleFormatter;
 
 public class DatabaseAuditLogger {
     private final Logger logger;
+    private FileHandler fileHandler;
 
     public DatabaseAuditLogger() {
         this.logger = Logger.getLogger("DatabaseAudit");
 
         try {
-            FileHandler fh = new FileHandler("database_audit.log", false);
-            fh.setFormatter(new SimpleFormatter());
+            fileHandler = new FileHandler("database_audit.log", true);
+            fileHandler.setFormatter(new SimpleFormatter());
             logger.setUseParentHandlers(false);
+
+            // Rimuove eventuali handler esistenti prima di aggiungere il nuovo
             for (var handler : logger.getHandlers()) {
                 logger.removeHandler(handler);
             }
-            logger.addHandler(fh);
-            closeLogger(fh);
-            
+
+            logger.addHandler(fileHandler);
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize audit logger", e);
         }
     }
 
-    public void closeLogger(FileHandler fh) {
-        if (fh != null) {
-            fh.close();  // rilascia il file .lck
-            logger.removeHandler(fh);
+    public void closeLogger() {
+        if (fileHandler != null) {
+            fileHandler.close();
+            logger.removeHandler(fileHandler);
+            fileHandler = null;
         }
     }
 
@@ -42,6 +45,4 @@ public class DatabaseAuditLogger {
         logger.info(String.format("[%s] Query execution - Session: %s, Query: %s, Success: %s",
             LocalDateTime.now(), sessionId, query, success));
     }
-
-
 }
