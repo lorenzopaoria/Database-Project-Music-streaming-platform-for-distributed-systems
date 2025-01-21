@@ -18,18 +18,14 @@ public class DatabaseAuditAspect {
     public DatabaseAuditAspect() {
         this.logger = Logger.getLogger("DatabaseAudit");
         try {
-            // Create logs directory if it doesn't exist
             File logDir = new File(LOG_DIR);
             if (!logDir.exists()) {
                 logDir.mkdirs();
             }
 
-            // Create FileHandler with full path
             this.fileHandler = new FileHandler(LOG_DIR + File.separator + LOG_FILE, true);
             fileHandler.setFormatter(new SimpleFormatter());
             logger.addHandler(fileHandler);
-            
-            // Log initialization success
             logger.info("Audit logging initialized at " + LocalDateTime.now());
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize audit logger", e);
@@ -44,11 +40,8 @@ public class DatabaseAuditAspect {
         boolean success = false;
 
         try {
-            // Get input stream to read authentication parameters
             Object inputStream = target.getClass().getField("input").get(target);
-            // Read email (we need to read this before proceed because the stream will be consumed)
             email = (String) inputStream.getClass().getMethod("readObject").invoke(inputStream);
-            // Skip password read as we don't want to log it
             inputStream.getClass().getMethod("readObject").invoke(inputStream);
 
             Object result = joinPoint.proceed();
@@ -69,7 +62,6 @@ public class DatabaseAuditAspect {
         boolean success = false;
 
         try {
-            // Read parameters before proceeding
             sessionId = (String) inputStream.getClass().getMethod("readObject").invoke(inputStream);
             query = (String) inputStream.getClass().getMethod("readObject").invoke(inputStream);
 

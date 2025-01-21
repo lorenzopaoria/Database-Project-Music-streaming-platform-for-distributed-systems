@@ -21,7 +21,7 @@
         <logback.version>1.2.11</logback.version>
     </properties>  
     
-    <!-- Global Dependencies -->
+    
     <dependencies>
         <!-- MySQL Connector -->
         <dependency>
@@ -50,7 +50,7 @@
             <version>42.7.1</version>
         </dependency>
 
-        <!-- aspect j -->
+        <!-- AspectJ for AOP -->
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
@@ -68,6 +68,13 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.9.7</version>
+        </dependency>
+        
     </dependencies>
     
     <profiles>
@@ -85,13 +92,6 @@
                         <configuration>
                             <mainClass>com.example.DatabaseServer</mainClass>  
                         </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -116,13 +116,6 @@
                         <configuration>
                             <mainClass>com.example.QueryGUI</mainClass>  
                         </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -132,38 +125,42 @@
                 <jdbc.password></jdbc.password>
             </properties>
         </profile>
-        
-        <!--<profile>
-            <id>client</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>  
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.1.0</version>
-                        <configuration>
-                            <mainClass>com.example.DatabaseClient</mainClass>  
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>-->
     </profiles>
     
     <build>
         <plugins>
-            <!-- Compiler Plugin -->
+            <!-- AspectJ Compiler Plugin -->
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>1.14.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <complianceLevel>11</complianceLevel>
+                    <source>11</source>
+                    <target>11</target>
+                    <encoding>UTF-8</encoding>
+                    <aspectLibraries>
+                        <aspectLibrary>
+                            <groupId>org.aspectj</groupId>
+                            <artifactId>aspectjweaver</artifactId>
+                        </aspectLibrary>
+                    </aspectLibraries>
+                    <compileArgs>
+                        <arg>-showWeaveInfo</arg>
+                    </compileArgs>
+                </configuration>
+            </plugin>
+            
+            <!-- Compiler Plugin -->
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
@@ -172,9 +169,9 @@
                     <target>11</target>
                     <release>11</release>
                 </configuration>
-            </plugin>
+            </plugin>-->
             
-            <!-- Optional: Shade Plugin for creating executable JAR -->
+            <!-- Shade Plugin for creating executable JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>

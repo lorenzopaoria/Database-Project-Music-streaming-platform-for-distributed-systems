@@ -6,7 +6,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
+//import java.io.File;
 
 import javax.swing.border.EmptyBorder;
 import java.awt.datatransfer.StringSelection;
@@ -96,7 +96,6 @@ public class QueryGUI {
             }
         });
     
-        // Add components with proper grid positions
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         panel.add(logoLabel, gbc);
     

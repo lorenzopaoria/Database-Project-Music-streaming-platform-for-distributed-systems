@@ -9,12 +9,31 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>aspectj-maven-plugin</artifactId>
+        <version>1.14.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>test-compile</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
+          <complianceLevel>11</complianceLevel>
           <source>11</source>
           <target>11</target>
-          <release>11</release>
+          <encoding>UTF-8</encoding>
+          <aspectLibraries>
+            <aspectLibrary>
+              <groupId>org.aspectj</groupId>
+              <artifactId>aspectjweaver</artifactId>
+            </aspectLibrary>
+          </aspectLibraries>
+          <compileArgs>
+            <arg>-showWeaveInfo</arg>
+          </compileArgs>
         </configuration>
       </plugin>
       <plugin>
@@ -47,13 +66,6 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <version>3.1.0</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>java</goal>
-                </goals>
-              </execution>
-            </executions>
             <configuration>
               <mainClass>com.example.DatabaseServer</mainClass>
             </configuration>
@@ -73,13 +85,6 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <version>3.1.0</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>java</goal>
-                </goals>
-              </execution>
-            </executions>
             <configuration>
               <mainClass>com.example.QueryGUI</mainClass>
             </configuration>
