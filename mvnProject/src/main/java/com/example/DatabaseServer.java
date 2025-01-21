@@ -5,7 +5,7 @@ import com.example.rbac.Permission;
 import com.example.session.Session;
 import com.example.dao.UserDAO;
 import com.example.factory.DatabaseFactory;
-import com.example.loggingaspect.DatabaseAuditAspect;
+import com.example.logging.DatabaseAuditLogger;
 
 import java.io.*;
 import java.net.*;
@@ -21,13 +21,14 @@ public class DatabaseServer {
     private final Map<String, Session> sessions = new ConcurrentHashMap<>();
     private final Map<String, Role> roles = new HashMap<>();
     private final ExecutorService threadPool;
+    private final DatabaseAuditLogger auditLogger;
     private final UserDAO userDAO;
     private ServerSocket serverSocket;
-    private static DatabaseAuditAspect auditAspect;
     private boolean running;
 
     public DatabaseServer() {
         this.threadPool = Executors.newCachedThreadPool();
+        this.auditLogger = new DatabaseAuditLogger();
         this.userDAO = new UserDAO(DatabaseFactory.getConnection());
         initializeRoles();
     }
@@ -35,15 +36,7 @@ public class DatabaseServer {
     public static void main(String[] args) {
         LOGGER.info("Starting Database Server...");
         DatabaseServer server = new DatabaseServer();
-        auditAspect = new DatabaseAuditAspect();
         server.start();
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            server.shutdown();
-            if (auditAspect != null) {
-                auditAspect.cleanup();
-            }
-        }));
     }
 
     public void start() {
@@ -126,9 +119,7 @@ public class DatabaseServer {
         private final DatabaseServer server;
         private ObjectInputStream input;
         private ObjectOutputStream output;
-        @SuppressWarnings("all")
-        private Session session; 
-        @SuppressWarnings("all")
+        private Session session;
         private String clientId;
 
         public ClientHandler(Socket socket, DatabaseServer server) {
@@ -178,8 +169,11 @@ public class DatabaseServer {
                     newSession.activate(server.getRole(userRole));
                     server.addSession(newSession);
                     session = newSession;
+                    
+                    auditLogger.logAuthentication(clientId, email, true);
                     output.writeObject("Authentication successful:" + newSession.getSessionId());
                 } else {
+                    auditLogger.logAuthentication(clientId, email, false);
                     output.writeObject("Authentication failed");
                 }
             } catch (SQLException e) {
@@ -203,8 +197,10 @@ public class DatabaseServer {
             try {
                 if (validateQueryPermissions(query, session.getActiveRoles())) {
                     String result = userDAO.executeQuery(query);
+                    auditLogger.logQuery(sessionId, query, true);
                     output.writeObject(result);
                 } else {
+                    auditLogger.logQuery(sessionId, query, false);
                     output.writeObject("Access denied: Insufficient permissions");
                 }
             } catch (SQLException e) {
@@ -241,3 +237,6 @@ public class DatabaseServer {
         }
     }
 }
+
+
+

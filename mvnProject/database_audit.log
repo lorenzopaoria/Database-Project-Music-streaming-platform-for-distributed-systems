@@ -1,0 +1,14 @@
+gen 20, 2025 5:28:34 PM com.example.logging.DatabaseAuditLogger logAuthentication
+INFO: [2025-01-20T17:28:34.180543100] Authentication attempt - Client: 9302814c, User: annapistorio@gmail.com, Success: true
+gen 20, 2025 5:28:59 PM com.example.logging.DatabaseAuditLogger logAuthentication
+INFO: [2025-01-20T17:28:59.565193] Authentication attempt - Client: 1d78bd66, User: admin, Success: false
+gen 20, 2025 5:29:04 PM com.example.logging.DatabaseAuditLogger logAuthentication
+INFO: [2025-01-20T17:29:04.050127400] Authentication attempt - Client: 1d78bd66, User: admin, Success: false
+gen 20, 2025 5:29:43 PM com.example.logging.DatabaseAuditLogger logAuthentication
+INFO: [2025-01-20T17:29:43.230093700] Authentication attempt - Client: 1d78bd66, User: annapistorio@gmail.com' --, Success: false
+gen 20, 2025 5:29:50 PM com.example.logging.DatabaseAuditLogger logAuthentication
+INFO: [2025-01-20T17:29:50.568976900] Authentication attempt - Client: 1d78bd66, User: annapistorio@gmail.com" --, Success: false
+gen 20, 2025 5:29:53 PM com.example.logging.DatabaseAuditLogger logAuthentication
+INFO: [2025-01-20T17:29:53.696416800] Authentication attempt - Client: 1d78bd66, User: annapistorio@gmail.com" --, Success: false
+gen 20, 2025 5:43:12 PM com.example.logging.DatabaseAuditLogger logAuthentication
+INFO: [2025-01-20T17:43:12.972392700] Authentication attempt - Client: 17ca581d, User: annapistorio@gmail.com, Success: true

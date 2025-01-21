@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/lorenzopaoria/Database-Project-Music-streaming-platform-for-distributed-systems/blob/9c442a3a6cf253d98253b7b7fdec08b9d5dc642c/Photo/queryGUI.png"/>
+  <img src="https://github.com/lorenzopaoria/Database-Project-Music-streaming-platform-for-distributed-systems/blob/782580af99781b09be5cf8dcae8d5e75fc36bc91/Photo/queryGUI.jpg"/>
 </div>
 
 # Music Streaming Platform Database Project for distributed systems
