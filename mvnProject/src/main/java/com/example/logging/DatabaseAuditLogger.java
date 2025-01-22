@@ -13,11 +13,10 @@ public class DatabaseAuditLogger {
         this.logger = Logger.getLogger("DatabaseAudit");
 
         try {
-            fileHandler = new FileHandler("database_audit.log", true);
+            fileHandler = new FileHandler("database_audit.log", false);
             fileHandler.setFormatter(new SimpleFormatter());
             logger.setUseParentHandlers(false);
 
-            // Rimuove eventuali handler esistenti prima di aggiungere il nuovo
             for (var handler : logger.getHandlers()) {
                 logger.removeHandler(handler);
             }
@@ -36,9 +35,9 @@ public class DatabaseAuditLogger {
         }
     }
 
-    public void logAuthentication(String clientId, String email, boolean success) {
-        logger.info(String.format("[%s] Authentication attempt - Client: %s, User: %s, Success: %s",
-            LocalDateTime.now(), clientId, email, success));
+    public void logAuthentication(String clientId, String email, String tipoUtente, boolean success) {
+        logger.info(String.format("[%s] Authentication attempt - Client: %s, User: %s, Tipo Utente: %s, Success: %s",
+            LocalDateTime.now(), clientId, email, tipoUtente, success));
     }
 
     public void logQuery(String sessionId, String query, boolean success) {

@@ -175,10 +175,10 @@ public class DatabaseServer {
                     server.addSession(newSession);
                     session = newSession;
                     
-                    auditLogger.logAuthentication(clientId, email, true);
+                    auditLogger.logAuthentication(clientId, email, userRole, true);
                     output.writeObject("Authentication successful:" + newSession.getSessionId());
                 } else {
-                    auditLogger.logAuthentication(clientId, email, false);
+                    auditLogger.logAuthentication(clientId, email,null, false);
                     output.writeObject("Authentication failed");
                 }
             } catch (SQLException e) {

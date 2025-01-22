@@ -24,7 +24,7 @@ public class QueryGUI {
 
     private void createLoginFrame() {
         JFrame loginFrame = new JFrame("Database Login");
-        loginFrame.setSize(400, 400); 
+        loginFrame.setSize(500, 500); 
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         JPanel panel = new JPanel(new GridBagLayout());
@@ -33,7 +33,7 @@ public class QueryGUI {
     
         ImageIcon logoIcon = new ImageIcon("src\\main\\java\\com\\example\\queryGUI.png");
         Image image = logoIcon.getImage();
-        Image scaledImage = image.getScaledInstance(600, 600, Image.SCALE_SMOOTH); 
+        Image scaledImage = image.getScaledInstance(250, -1, Image.SCALE_SMOOTH); 
         ImageIcon scaledIcon = new ImageIcon(scaledImage); 
         JLabel logoLabel = new JLabel(scaledIcon);
     
@@ -79,7 +79,13 @@ public class QueryGUI {
         });
     
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER; 
+        gbc.fill = GridBagConstraints.NONE;
         panel.add(logoLabel, gbc);
+
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        panel.add(Box.createVerticalStrut(20), gbc);
     
         gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 1;
         panel.add(new JLabel("Email:"), gbc);

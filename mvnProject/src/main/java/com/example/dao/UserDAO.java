@@ -13,17 +13,16 @@ public class UserDAO {
     }
 
     public String authenticate(String email, String password) throws SQLException {
-        String query = "SELECT tu.tipo \n" + //
-                        "        FROM Utente u \n" + //
-                        "        JOIN Tipo_Utente tu ON u.tipo = tu.idTipoUtente \n" + //
-                        "        WHERE u.email = ? AND u.passw = ?";
+        String query =  "SELECT u.tipo \n" +
+                        "FROM Utente u \n" +
+                        "WHERE u.email = ? AND u.passw = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, email);
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                String tipoUtente = rs.getString("tipo");
-                return tipoUtente.toLowerCase();
+                int tipoUtente = rs.getInt("tipo");
+                return tipoUtente == 0 ? "free" : "premium";
             }
             return null;
         }
