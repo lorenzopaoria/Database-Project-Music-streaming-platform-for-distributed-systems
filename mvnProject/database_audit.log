@@ -1,0 +1,40 @@
+gen 23, 2025 3:50:16 PM com.example.logging.DatabaseAuditLogger logAuthentication
+INFO: [2025-01-23T15:50:16.914821700] Authentication attempt - Client: e35ba14e, User: margheritaursino@gmail.com, Tipo Utente: free, Success: true
+gen 23, 2025 3:50:16 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:16.922820700] Query execution - Session: d675b732-5885-4944-a920-ef6141add3b7, Query: SELECT * FROM Contenuto LIMIT 5, Success: true
+gen 23, 2025 3:50:16 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:16.927816300] Query execution - Session: d675b732-5885-4944-a920-ef6141add3b7, Query: UPDATE Contenuto SET nome = 'Test Title' WHERE idContenuto = 1, Success: false
+gen 23, 2025 3:50:16 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:16.929816] Query execution - Session: d675b732-5885-4944-a920-ef6141add3b7, Query: INSERT INTO Contenuto (nome, duarata, riproduzione, tipo) VALUES ('New Song', 180, 0, 1), Success: false
+gen 23, 2025 3:50:16 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:16.930819900] Query execution - Session: d675b732-5885-4944-a920-ef6141add3b7, Query: DELETE FROM Contenuto WHERE idContenuto = 1, Success: false
+gen 23, 2025 3:50:16 PM com.example.logging.DatabaseAuditLogger logAuthentication
+INFO: [2025-01-23T15:50:16.934763300] Authentication attempt - Client: d9cd6946, User: annapistorio@gmail.com, Tipo Utente: premium, Success: true
+gen 23, 2025 3:50:16 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:16.936817] Query execution - Session: 03024110-7ce6-4259-bf08-739ca71570b9, Query: SELECT * FROM Contenuto LIMIT 5, Success: true
+gen 23, 2025 3:50:16 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:16.942969300] Query execution - Session: 03024110-7ce6-4259-bf08-739ca71570b9, Query: UPDATE Contenuto SET nome = 'Test Title' WHERE idContenuto = 1, Success: true
+gen 23, 2025 3:50:16 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:16.946969800] Query execution - Session: 03024110-7ce6-4259-bf08-739ca71570b9, Query: INSERT INTO Contenuto (nome, duarata, riproduzione, tipo) VALUES ('New Song', 180, 0, 1), Success: true
+gen 23, 2025 3:50:16 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:16.948969500] Query execution - Session: 03024110-7ce6-4259-bf08-739ca71570b9, Query: DELETE FROM Contenuto WHERE idContenuto = 1, Success: false
+gen 23, 2025 3:50:35 PM com.example.logging.DatabaseAuditLogger logAuthentication
+INFO: [2025-01-23T15:50:35.754855800] Authentication attempt - Client: dd8426b5, User: margheritaursino@gmail.com, Tipo Utente: free, Success: true
+gen 23, 2025 3:50:35 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:35.758847800] Query execution - Session: b96ce6d9-0b8f-40a1-bcfd-ad82a6abbb09, Query: SELECT * FROM Contenuto LIMIT 5, Success: true
+gen 23, 2025 3:50:35 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:35.764880400] Query execution - Session: b96ce6d9-0b8f-40a1-bcfd-ad82a6abbb09, Query: UPDATE Contenuto SET nome = 'Test Title' WHERE idContenuto = 1, Success: false
+gen 23, 2025 3:50:35 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:35.765856700] Query execution - Session: b96ce6d9-0b8f-40a1-bcfd-ad82a6abbb09, Query: INSERT INTO Contenuto (nome, duarata, riproduzione, tipo) VALUES ('New Song', 180, 0, 1), Success: false
+gen 23, 2025 3:50:35 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:35.766857300] Query execution - Session: b96ce6d9-0b8f-40a1-bcfd-ad82a6abbb09, Query: DELETE FROM Contenuto WHERE idContenuto = 1, Success: false
+gen 23, 2025 3:50:35 PM com.example.logging.DatabaseAuditLogger logAuthentication
+INFO: [2025-01-23T15:50:35.772850700] Authentication attempt - Client: 0f6e4d67, User: annapistorio@gmail.com, Tipo Utente: premium, Success: true
+gen 23, 2025 3:50:35 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:35.774845800] Query execution - Session: 19fabfbf-b925-484e-beed-d1c3b46158fc, Query: SELECT * FROM Contenuto LIMIT 5, Success: true
+gen 23, 2025 3:50:35 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:35.778854400] Query execution - Session: 19fabfbf-b925-484e-beed-d1c3b46158fc, Query: UPDATE Contenuto SET nome = 'Test Title' WHERE idContenuto = 1, Success: true
+gen 23, 2025 3:50:35 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:35.782851700] Query execution - Session: 19fabfbf-b925-484e-beed-d1c3b46158fc, Query: INSERT INTO Contenuto (nome, duarata, riproduzione, tipo) VALUES ('New Song', 180, 0, 1), Success: true
+gen 23, 2025 3:50:35 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-01-23T15:50:35.783866100] Query execution - Session: 19fabfbf-b925-484e-beed-d1c3b46158fc, Query: DELETE FROM Contenuto WHERE idContenuto = 1, Success: false

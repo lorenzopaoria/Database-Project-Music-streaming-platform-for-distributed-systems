@@ -1,11 +1,14 @@
 com\example\rbac\Permission.class
+com\example\DatabaseClient$QueryTest.class
 com\example\QueryGUI$4.class
+com\example\DatabaseClient$UserTest.class
 com\example\proxy\DatabaseProxy.class
 com\example\QueryGUI.class
 com\example\session\Session.class
 com\example\QueryGUI$3.class
 com\example\factory\DatabaseFactory.class
 com\example\DatabaseServer$ClientHandler.class
+com\example\DatabaseClient.class
 com\example\QueryGUI$1.class
 com\example\QueryGUI$2.class
 com\example\rbac\Role.class
