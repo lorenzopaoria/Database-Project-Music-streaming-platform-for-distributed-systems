@@ -11,6 +11,10 @@ public class Session {
     private LocalDateTime lastAccessTime;
     private static final int SESSION_TIMEOUT_MINUTES = 5;
 
+    public String getUserId() {
+        return userId;
+    }
+
     public Session(String userId) {
         this(userId, UUID.randomUUID().toString());
     }
@@ -26,11 +30,6 @@ public class Session {
         activeRoles.add(role);
         updateLastAccessTime();
     }
-
-    /*public boolean isActive(Role role) {
-        updateLastAccessTime();
-        return activeRoles.contains(role);
-    }*/
 
     public Set<Role> getActiveRoles() {
         updateLastAccessTime();
