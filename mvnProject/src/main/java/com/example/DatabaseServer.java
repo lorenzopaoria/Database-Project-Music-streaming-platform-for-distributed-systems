@@ -74,8 +74,6 @@ public class DatabaseServer {
                 threadPool.shutdownNow();
             }
             DatabaseFactory.getConnection().close();
-    
-            // Chiusura corretta del logger di audit
             auditLogger.closeLogger();
             LOGGER.info("Audit logger closed.");
         } catch (Exception e) {
