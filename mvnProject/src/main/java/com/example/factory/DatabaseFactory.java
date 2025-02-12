@@ -1,19 +1,25 @@
 package com.example.factory;
 
+import com.example.config.DatabaseConfig;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseFactory {
-    private static final String URL = "jdbc:mysql://localhost:3306/piattaforma_streaming_musicale";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
+    private static Connection connection;
 
     public static Connection getConnection() {
-        try {
-            return DriverManager.getConnection(URL, USER, PASSWORD);
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to connect to database", e);
+        if (connection == null) {
+            try {
+                connection = DriverManager.getConnection(
+                    DatabaseConfig.getDatabaseUrl(),
+                    DatabaseConfig.getDatabaseUser(),
+                    DatabaseConfig.getDatabasePassword()
+                );
+            } catch (SQLException e) {
+                throw new RuntimeException("Failed to create database connection", e);
+            }
         }
+        return connection;
     }
 }

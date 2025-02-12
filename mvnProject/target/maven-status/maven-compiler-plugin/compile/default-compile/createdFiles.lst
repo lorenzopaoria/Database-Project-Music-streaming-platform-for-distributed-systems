@@ -12,6 +12,8 @@ com\example\DatabaseClient.class
 com\example\QueryGUI$1.class
 com\example\QueryGUI$2.class
 com\example\rbac\Role.class
+com\example\config\DatabaseConfig.class
+com\example\factory\DatabaseProxyFactory.class
 com\example\DatabaseServer.class
 com\example\dao\UserDAO.class
 com\example\logging\DatabaseAuditLogger.class

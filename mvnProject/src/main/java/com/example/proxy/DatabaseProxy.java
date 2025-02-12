@@ -5,20 +5,22 @@ import java.io.*;
 import java.net.Socket;
 
 public class DatabaseProxy {
-    private static final String SERVER_HOST = "127.0.0.1";
-    private static final int SERVER_PORT = 12345;
     private Session session;
     private Socket socket;
     private ObjectOutputStream output;
     private ObjectInputStream input;
+    private final String serverHost;
+    private final int serverPort;
 
-    public DatabaseProxy() {
+    public DatabaseProxy(String serverHost, int serverPort) {
+        this.serverHost = serverHost;
+        this.serverPort = serverPort;
         connect();
     }
 
     private void connect() {
         try {
-            socket = new Socket(SERVER_HOST, SERVER_PORT);
+            socket = new Socket(serverHost, serverPort);
             output = new ObjectOutputStream(socket.getOutputStream());
             input = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
