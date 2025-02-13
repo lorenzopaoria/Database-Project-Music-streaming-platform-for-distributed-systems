@@ -1,5 +1,6 @@
 package com.example;
 
+import com.example.factory.DatabaseProxyFactory;
 import com.example.proxy.DatabaseProxy;
 import com.example.config.DatabaseConfig; // Aggiungi questa importazione
 import com.formdev.flatlaf.FlatLightLaf;
@@ -19,7 +20,7 @@ public class QueryGUI {
     private JPasswordField passwordField;
 
     public QueryGUI() {
-        this.databaseProxy = new DatabaseProxy(DatabaseConfig.getServerHost(), DatabaseConfig.getServerPort());
+        this.databaseProxy = DatabaseProxyFactory.getProxy();
         createLoginFrame();
     }
 
