@@ -2,7 +2,7 @@ package com.example;
 
 import com.example.factory.DatabaseProxyFactory;
 import com.example.proxy.DatabaseProxy;
-import com.example.config.DatabaseConfig; // Aggiungi questa importazione
+import com.example.config.DatabaseConfig;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
 import java.awt.*;

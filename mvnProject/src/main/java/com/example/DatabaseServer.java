@@ -5,7 +5,6 @@ import com.example.rbac.Permission;
 import com.example.session.Session;
 import com.example.dao.UserDAO;
 import com.example.factory.DatabaseFactory;
-import com.example.logging.DatabaseAuditLogger;
 import java.io.*;
 import java.net.*;
 import java.sql.*;
@@ -20,14 +19,12 @@ public class DatabaseServer {
     private final Map<String, Session> sessions = new ConcurrentHashMap<>();
     private final Map<String, Role> roles = new HashMap<>();
     private final ExecutorService threadPool;
-    private final DatabaseAuditLogger auditLogger;
     private final UserDAO userDAO;
     private ServerSocket serverSocket;
     private boolean running;
 
     public DatabaseServer() {
         this.threadPool = Executors.newCachedThreadPool();
-        this.auditLogger = new DatabaseAuditLogger();
         this.userDAO = new UserDAO(DatabaseFactory.getConnection());
         initializeRoles();
     }
@@ -74,7 +71,6 @@ public class DatabaseServer {
                 threadPool.shutdownNow();
             }
             DatabaseFactory.getConnection().close();
-            auditLogger.closeLogger();
             LOGGER.info("Audit logger closed.");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error during server shutdown", e);
@@ -116,7 +112,7 @@ public class DatabaseServer {
         roles.put("free", freeRole);
     }
 
-    private class ClientHandler implements Runnable {
+    public class ClientHandler implements Runnable {
         private final Socket socket;
         private final DatabaseServer server;
         private ObjectInputStream input;
@@ -129,6 +125,21 @@ public class DatabaseServer {
             this.socket = socket;
             this.server = server;
             this.clientId = UUID.randomUUID().toString().substring(0, 8);
+        }
+
+        private String currentUserRole;
+        private String result;
+
+        public String getClientId() {
+            return this.clientId;
+        }
+
+        public String getCurrentUserRole() {
+            return this.currentUserRole;
+        }
+
+        public String getResult() {
+            return this.result;
         }
 
         @Override
@@ -164,19 +175,17 @@ public class DatabaseServer {
         private void handleAuthentication() throws IOException, ClassNotFoundException {
             String email = (String) input.readObject();
             String password = (String) input.readObject();
-
+        
             try {
                 String userRole = userDAO.authenticate(email, password);
                 if (userRole != null) {
+                    this.currentUserRole = userRole;  // Imposta il ruolo dell'utente
                     Session newSession = new Session(email);
                     newSession.activate(server.getRole(userRole));
                     server.addSession(newSession);
                     session = newSession;
-                    
-                    auditLogger.logAuthentication(clientId, email, userRole, true);
                     output.writeObject("Authentication successful:" + newSession.getSessionId());
                 } else {
-                    auditLogger.logAuthentication(clientId, email,null, false);
                     output.writeObject("Authentication failed");
                 }
             } catch (SQLException e) {
@@ -185,33 +194,35 @@ public class DatabaseServer {
             }
             output.flush();
         }
-
+        
         private void handleQuery() throws IOException, ClassNotFoundException {
             String sessionId = (String) input.readObject();
             String query = (String) input.readObject();
-
+        
             Session session = server.getSession(sessionId);
             if (session == null || session.isExpired()) {
-                output.writeObject("Session expired");
+                result = "Session expired";  // Store result before sending
+                output.writeObject(result);
                 output.flush();
                 return;
             }
-
+        
             try {
                 if (validateQueryPermissions(query, session.getActiveRoles())) {
-                    String result = userDAO.executeQuery(query);
-                    auditLogger.logQuery(sessionId, query, true);
+                    result = userDAO.executeQuery(query);  // Store the query result
                     output.writeObject(result);
                 } else {
-                    auditLogger.logQuery(sessionId, query, false);
-                    output.writeObject("Access denied: Insufficient permissions");
+                    result = "Access denied: Insufficient permissions";  // Store denied access message
+                    output.writeObject(result);
                 }
             } catch (SQLException e) {
                 LOGGER.log(Level.SEVERE, "Query execution error", e);
-                output.writeObject("Query execution error: " + e.getMessage());
+                result = "Query execution error: " + e.getMessage();
+                output.writeObject(result);
             }
             output.flush();
         }
+        
 
         private boolean validateQueryPermissions(String query, Set<Role> roles) {
             String operation = extractOperation(query);

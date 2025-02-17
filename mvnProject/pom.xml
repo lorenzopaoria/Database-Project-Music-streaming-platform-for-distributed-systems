@@ -50,11 +50,26 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
+
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
         </dependency>
+        <!-- AspectJ Runtime -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.9.7</version> <!-- Usa la versione più recente -->
+        </dependency>
+
+        <!-- AspectJ Weaver -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.9.7</version> <!-- Usa la versione più recente -->
+        </dependency>
+
     </dependencies>
     
     <profiles>
@@ -158,6 +173,26 @@
                     <source>11</source>
                     <target>11</target>
                     <release>11</release>
+                </configuration>
+            </plugin>
+
+            <!-- Plugin per AspectJ -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>1.14.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal> <!-- Compila gli aspetti -->
+                            <goal>test-compile</goal> <!-- Compila gli aspetti per i test -->
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <complianceLevel>11</complianceLevel> <!-- Livello di compatibilità Java -->
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             
