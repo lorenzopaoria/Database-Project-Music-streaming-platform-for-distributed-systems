@@ -29,9 +29,9 @@ public class DatabaseAuditLogger {
         return instance;
     }
 
-    public void logAuthentication(String clientId, String email, String tipoUtente, boolean success) {
-        logger.info(String.format("[%s] Authentication attempt - Client: %s, User: %s, Tipo Utente: %s, Success: %s",
-            LocalDateTime.now(), clientId, email, tipoUtente, success));
+    public void logAuthentication(String clientId, String sessionId, String email, String tipoUtente, boolean success) {
+        logger.info(String.format("[%s] Authentication attempt - Client: %s, Session: %s, User: %s, Tipo Utente: %s, Success: %s",
+            LocalDateTime.now(), clientId, sessionId, email, tipoUtente, success));
     }
 
     public void logQuery(String sessionId, String query, boolean success) {

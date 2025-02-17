@@ -2,7 +2,6 @@ package com.example.logging;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -15,8 +14,8 @@ public class DatabaseAuditAspect {
 
     private static class AuthContext {
         String clientId;
+        String sessionId;
         String email;
-        String tipoUtente;
     }
 
     private static class QueryContext {
@@ -101,6 +100,7 @@ public class DatabaseAuditAspect {
             
             auditLogger.logAuthentication(
                 context.clientId,
+                context.sessionId,
                 context.email,
                 currentRole,
                 success
