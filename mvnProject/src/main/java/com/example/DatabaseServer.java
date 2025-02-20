@@ -179,7 +179,7 @@ public class DatabaseServer {
             try {
                 String userRole = userDAO.authenticate(email, password);
                 if (userRole != null) {
-                    this.currentUserRole = userRole;  // Imposta il ruolo dell'utente
+                    this.currentUserRole = userRole;  // imposta il ruolo dell'utente
                     Session newSession = new Session(email);
                     newSession.activate(server.getRole(userRole));
                     server.addSession(newSession);
@@ -201,7 +201,7 @@ public class DatabaseServer {
         
             Session session = server.getSession(sessionId);
             if (session == null || session.isExpired()) {
-                result = "Session expired";  // Store result before sending
+                result = "Session expired";  // salva i risultati prima di inviarli
                 output.writeObject(result);
                 output.flush();
                 return;
@@ -209,10 +209,10 @@ public class DatabaseServer {
         
             try {
                 if (validateQueryPermissions(query, session.getActiveRoles())) {
-                    result = userDAO.executeQuery(query);  // Store the query result
+                    result = userDAO.executeQuery(query);  // salva il risultato della query
                     output.writeObject(result);
                 } else {
-                    result = "Access denied: Insufficient permissions";  // Store denied access message
+                    result = "Access denied: Insufficient permissions";
                     output.writeObject(result);
                 }
             } catch (SQLException e) {

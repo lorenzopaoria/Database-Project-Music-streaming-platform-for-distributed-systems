@@ -1,7 +1,6 @@
-
-feb 17, 2025 2:16:32 PM com.example.logging.DatabaseAuditLogger logAuthentication
-INFO: [2025-02-17T14:16:32.373900500] Authentication attempt - Client: 4d1803fa, Session: null, User: annapistorio@gmail.com, Tipo Utente: premium, Success: true
-feb 17, 2025 2:16:38 PM com.example.logging.DatabaseAuditLogger logQuery
-INFO: [2025-02-17T14:16:38.179895] Query execution - Session: fa0ad211-4df8-4f08-85e9-cada74da0e76, Query: select * from contenuto, Success: true
-feb 17, 2025 2:16:39 PM com.example.logging.DatabaseAuditLogger logQuery
-INFO: [2025-02-17T14:16:39.421096500] Query execution - Session: fa0ad211-4df8-4f08-85e9-cada74da0e76, Query: select * from contenut, Success: false
+feb 20, 2025 6:01:27 PM com.example.logging.DatabaseAuditLogger logAuthentication
+INFO: [2025-02-20T18:01:27.982911700] Authentication attempt - Client: ee1a20ec, Session: null, User: annapistorio@gmail.com, Tipo Utente: premium, Success: true
+feb 20, 2025 6:01:55 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-02-20T18:01:55.971498200] Query execution - Session: 0ee2c3bc-9165-43d8-934b-813dc4115f21, Query: select * from contenuto, Success: true
+feb 20, 2025 6:02:00 PM com.example.logging.DatabaseAuditLogger logQuery
+INFO: [2025-02-20T18:02:00.283372] Query execution - Session: 0ee2c3bc-9165-43d8-934b-813dc4115f21, Query: select * from contenut, Success: false

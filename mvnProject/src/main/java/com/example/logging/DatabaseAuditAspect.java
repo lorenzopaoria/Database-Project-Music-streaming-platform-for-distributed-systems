@@ -35,7 +35,7 @@ public class DatabaseAuditAspect {
     @Pointcut("execution(* com.example.DatabaseServer.ClientHandler.handleQuery())")
     public void queryPointcut() {}
 
-    // Prima dell'autenticazione, inizializza il contesto
+    // prima dell'autenticazione inizializzo il contesto
     @Before("authenticationPointcut()")
 
     public void beforeAuthentication(JoinPoint joinPoint) {
@@ -44,7 +44,7 @@ public class DatabaseAuditAspect {
         authContextHolder.set(context);
     }
 
-    // Cattura i parametri durante la lettura
+    // cattura i parametri durante la lettura
     @AfterReturning(
         pointcut = "readObjectPointcut() && withincode(* handleAuthentication())",
         returning = "result"
@@ -61,14 +61,14 @@ public class DatabaseAuditAspect {
         }
     }
 
-    // Prima della query, inizializza il contesto
+    // prima della query inizializzo il contesto
     @Before("queryPointcut()")
     public void beforeQuery(JoinPoint joinPoint) {
         QueryContext context = new QueryContext();
         queryContextHolder.set(context);
     }
 
-    // Cattura i parametri della query durante la lettura
+    // cattura i parametri della query durante la lettura
     @AfterReturning(
         pointcut = "readObjectPointcut() && withincode(* handleQuery())",
         returning = "result"
@@ -96,7 +96,6 @@ public class DatabaseAuditAspect {
     public void afterAuthentication(JoinPoint joinPoint, Object result) {
         AuthContext context = authContextHolder.get();
         if (context != null) {
-            // Ottieni il ClientHandler
             com.example.DatabaseServer.ClientHandler handler = (com.example.DatabaseServer.ClientHandler) joinPoint.getTarget();
             
             String currentRole = handler.getCurrentUserRole();
@@ -118,11 +117,10 @@ public class DatabaseAuditAspect {
     pointcut = "queryPointcut()",
     returning = "result"
     )
-    
+
     public void afterQuery(JoinPoint joinPoint, Object result) {
         QueryContext context = queryContextHolder.get();
         if (context != null) {
-            // Ottieni il ClientHandler
             com.example.DatabaseServer.ClientHandler handler = (com.example.DatabaseServer.ClientHandler) joinPoint.getTarget();
             
             String currentResult = handler.getResult();
