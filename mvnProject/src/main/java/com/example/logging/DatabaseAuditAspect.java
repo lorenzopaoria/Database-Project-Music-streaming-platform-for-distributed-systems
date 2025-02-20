@@ -37,6 +37,7 @@ public class DatabaseAuditAspect {
 
     // Prima dell'autenticazione, inizializza il contesto
     @Before("authenticationPointcut()")
+
     public void beforeAuthentication(JoinPoint joinPoint) {
         AuthContext context = new AuthContext();
         context.clientId = ((com.example.DatabaseServer.ClientHandler) joinPoint.getTarget()).getClientId();
@@ -48,6 +49,7 @@ public class DatabaseAuditAspect {
         pointcut = "readObjectPointcut() && withincode(* handleAuthentication())",
         returning = "result"
     )
+
     public void afterReadAuthData(JoinPoint joinPoint, Object result) {
         if (result instanceof String) {
             AuthContext context = authContextHolder.get();
@@ -71,6 +73,7 @@ public class DatabaseAuditAspect {
         pointcut = "readObjectPointcut() && withincode(* handleQuery())",
         returning = "result"
     )
+
     public void afterReadQueryData(JoinPoint joinPoint, Object result) {
         if (result instanceof String) {
             QueryContext context = queryContextHolder.get();
@@ -89,6 +92,7 @@ public class DatabaseAuditAspect {
     pointcut = "authenticationPointcut()",
     returning = "result"
     )
+
     public void afterAuthentication(JoinPoint joinPoint, Object result) {
         AuthContext context = authContextHolder.get();
         if (context != null) {
@@ -114,6 +118,7 @@ public class DatabaseAuditAspect {
     pointcut = "queryPointcut()",
     returning = "result"
     )
+    
     public void afterQuery(JoinPoint joinPoint, Object result) {
         QueryContext context = queryContextHolder.get();
         if (context != null) {
