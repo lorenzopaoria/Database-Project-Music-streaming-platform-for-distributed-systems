@@ -8,8 +8,8 @@ import org.aspectj.lang.annotation.Pointcut;
 
 @Aspect
 public class DatabaseAuditAspect {
-    private final DatabaseAuditLogger auditLogger = DatabaseAuditLogger.getInstance();
-    private final ThreadLocal<AuthContext> authContextHolder = new ThreadLocal<>();
+    private final DatabaseAuditLogger auditLogger = DatabaseAuditLogger.getInstance();//instanza per chiamare funzioni di scrittura
+    private final ThreadLocal<AuthContext> authContextHolder = new ThreadLocal<>();//contesti di autentificazione e query per thread in modo da gestire il servizio multithread
     private final ThreadLocal<QueryContext> queryContextHolder = new ThreadLocal<>();
 
     private static class AuthContext {
@@ -23,19 +23,19 @@ public class DatabaseAuditAspect {
         String query;
     }
 
-    // Pointcut per ObjectInputStream.readObject() nel contesto di handleAuthentication
+    //Pointcut che intercetta la chiamata al metodo readObject() della classe ObjectInputStream, usato nel contesto di autenticazione
     @Pointcut("call(* java.io.ObjectInputStream.readObject()) && within(com.example.DatabaseServer.ClientHandler)")
     public void readObjectPointcut() {}
 
-    // Pointcut per il metodo handleAuthentication
+    // Pointcut che intercetta l'esecuzione del metodo handleAuthentication(
     @Pointcut("execution(* com.example.DatabaseServer.ClientHandler.handleAuthentication())")
     public void authenticationPointcut() {}
 
-    // Pointcut per il metodo handleQuery
+    // Pointcut che intercetta l'esecuzione del metodo handleQuery()
     @Pointcut("execution(* com.example.DatabaseServer.ClientHandler.handleQuery())")
     public void queryPointcut() {}
 
-    // prima dell'autenticazione inizializzo il contesto
+    // Prima dell'autenticazione, inizializza il contesto di autenticazione
     @Before("authenticationPointcut()")
 
     public void beforeAuthentication(JoinPoint joinPoint) {
@@ -44,7 +44,7 @@ public class DatabaseAuditAspect {
         authContextHolder.set(context);
     }
 
-    // cattura i parametri durante la lettura
+    // Dopo aver letto i dati di autenticazione, aggiorna il contesto
     @AfterReturning(
         pointcut = "readObjectPointcut() && withincode(* handleAuthentication())",
         returning = "result"
@@ -61,14 +61,14 @@ public class DatabaseAuditAspect {
         }
     }
 
-    // prima della query inizializzo il contesto
+    // Prima di eseguire la query, inizializza il contesto per la query
     @Before("queryPointcut()")
     public void beforeQuery(JoinPoint joinPoint) {
         QueryContext context = new QueryContext();
         queryContextHolder.set(context);
     }
 
-    // cattura i parametri della query durante la lettura
+    // Dopo aver letto i dati della query, aggiorna il contesto della query
     @AfterReturning(
         pointcut = "readObjectPointcut() && withincode(* handleQuery())",
         returning = "result"
@@ -87,7 +87,7 @@ public class DatabaseAuditAspect {
         }
     }
 
-    // Dopo l'autenticazione
+    // Dopo l'autenticazione, esegue il log delle informazioni relative all'autenticazione
     @AfterReturning(
     pointcut = "authenticationPointcut()",
     returning = "result"
@@ -112,7 +112,7 @@ public class DatabaseAuditAspect {
         }
     }
 
-    // Dopo l'esecuzione della query
+    // Dopo l'esecuzione della query, esegue il log delle informazioni relative all'esecuzione della query
     @AfterReturning(
     pointcut = "queryPointcut()",
     returning = "result"

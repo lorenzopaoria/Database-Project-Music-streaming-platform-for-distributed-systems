@@ -12,13 +12,13 @@ public class DatabaseProxy {
     private final String serverHost;
     private final int serverPort;
 
-    public DatabaseProxy(String serverHost, int serverPort) {
+    public DatabaseProxy(String serverHost, int serverPort) {//costruttore per la connessione
         this.serverHost = serverHost;
         this.serverPort = serverPort;
         connect();
     }
 
-    private void connect() {
+    private void connect() {//metodo per la connessione
         try {
             socket = new Socket(serverHost, serverPort);
             output = new ObjectOutputStream(socket.getOutputStream());
@@ -28,7 +28,7 @@ public class DatabaseProxy {
         }
     }
 
-    public String authenticate(String email, String password) throws IOException, ClassNotFoundException {
+    public String authenticate(String email, String password) throws IOException, ClassNotFoundException {//metodo per l'autenticazione
         output.writeObject("AUTH");
         output.writeObject(email);
         output.writeObject(password);
@@ -46,7 +46,7 @@ public class DatabaseProxy {
         return response;
     }
     
-    public String executeQuery(String query) throws IOException, ClassNotFoundException {
+    public String executeQuery(String query) throws IOException, ClassNotFoundException {//metodo per esecuzione delle queries
         if (session == null || session.isExpired()) {
             throw new SecurityException("Session expired");
         }

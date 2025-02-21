@@ -15,29 +15,29 @@ import java.util.logging.Logger;
 
 public class DatabaseServer {
     private static final int PORT = 12345;
-    private static final Logger LOGGER = Logger.getLogger(DatabaseServer.class.getName());
-    private final Map<String, Session> sessions = new ConcurrentHashMap<>();
-    private final Map<String, Role> roles = new HashMap<>();
+    private static final Logger LOGGER = Logger.getLogger(DatabaseServer.class.getName());//loggin tramite libreria stampo su terminale
+    private final Map<String, Session> sessions = new ConcurrentHashMap<>();//mappa sessioni usata per i thread
+    private final Map<String, Role> roles = new HashMap<>();//mappa ruoli disponibili
     private final ExecutorService threadPool;
-    private final UserDAO userDAO;
+    private final UserDAO userDAO; //per accesso ai dati utente
     private ServerSocket serverSocket;
     private boolean running;
 
     public DatabaseServer() {
-        this.threadPool = Executors.newCachedThreadPool();
-        this.userDAO = new UserDAO(DatabaseFactory.getConnection());
+        this.threadPool = Executors.newCachedThreadPool();//una pool di thread dinamica
+        this.userDAO = new UserDAO(DatabaseFactory.getConnection());//crea connessione al database tramite il databaseFactory
         initializeRoles();
     }
 
     public static void main(String[] args) {
         LOGGER.info("Starting Database Server...");
         DatabaseServer server = new DatabaseServer();
-        server.start();
+        server.start();//avvio server
     }
 
     public void start() {
         try {
-            serverSocket = new ServerSocket(PORT);
+            serverSocket = new ServerSocket(PORT);//crea socket su porta specificata
             running = true;
             LOGGER.info("Server listening on port " + PORT);
 
@@ -45,8 +45,8 @@ public class DatabaseServer {
                 try {
                     Socket clientSocket = serverSocket.accept();
                     LOGGER.info("New client connected: " + clientSocket.getInetAddress());
-                    ClientHandler handler = new ClientHandler(clientSocket, this);
-                    threadPool.execute(handler);
+                    ClientHandler handler = new ClientHandler(clientSocket, this);//per ogni nuova connessione crea un clienthandler
+                    threadPool.execute(handler);// e lo esegue in un thread nuovo
                 } catch (IOException e) {
                     if (running) {
                         LOGGER.log(Level.SEVERE, "Error accepting client connection", e);
@@ -64,13 +64,13 @@ public class DatabaseServer {
         running = false;
         try {
             if (serverSocket != null && !serverSocket.isClosed()) {
-                serverSocket.close();
+                serverSocket.close();//chiude socket
             }
-            threadPool.shutdown();
+            threadPool.shutdown();//chiude pool di thread
             if (!threadPool.awaitTermination(60, TimeUnit.SECONDS)) {
-                threadPool.shutdownNow();
+                threadPool.shutdownNow();//se il thread resta inattivo per piu di 60 secondi viene arrestato
             }
-            DatabaseFactory.getConnection().close();
+            DatabaseFactory.getConnection().close();//chiusura connessione al db
             LOGGER.info("Audit logger closed.");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error during server shutdown", e);
@@ -89,9 +89,9 @@ public class DatabaseServer {
 
     public Session getSession(String sessionId) {
         return sessions.get(sessionId);
-    }
+    }//metodi get fatti per aspectlog
 
-    private void initializeRoles() {
+    private void initializeRoles() {//inizializzazione ruoli con permessi
         Role adminRole = new Role("admin");
         adminRole.addPermission(new Permission("SELECT", "*"));
         adminRole.addPermission(new Permission("INSERT", "*"));
@@ -152,13 +152,13 @@ public class DatabaseServer {
                     String command = (String) input.readObject();
                     switch (command) {
                         case "AUTH":
-                            handleAuthentication();
+                            handleAuthentication();//gestisce autenticazione
                             break;
                         case "QUERY":
-                            handleQuery();
+                            handleQuery();//gestisce esecuzione query
                             break;
                         case "EXIT":
-                            return;
+                            return;//esce quando il client si disconnette
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -181,7 +181,7 @@ public class DatabaseServer {
                 if (userRole != null) {
                     this.currentUserRole = userRole;  // imposta il ruolo dell'utente
                     Session newSession = new Session(email);
-                    newSession.activate(server.getRole(userRole));
+                    newSession.activate(server.getRole(userRole));//attiva sessione con ruolo utente corretto
                     server.addSession(newSession);
                     session = newSession;
                     output.writeObject("Authentication successful:" + newSession.getSessionId());
@@ -200,16 +200,16 @@ public class DatabaseServer {
             String query = (String) input.readObject();
         
             Session session = server.getSession(sessionId);
-            if (session == null || session.isExpired()) {
-                result = "Session expired";  // salva i risultati prima di inviarli
+            if (session == null || session.isExpired()) {//caso base sessione scaduta
+                result = "Session expired"; 
                 output.writeObject(result);
                 output.flush();
                 return;
             }
         
             try {
-                if (validateQueryPermissions(query, session.getActiveRoles())) {
-                    result = userDAO.executeQuery(query);  // salva il risultato della query
+                if (validateQueryPermissions(query, session.getActiveRoles())) {//prima controllo se posso eseguire, se posso allora la eseguo
+                    result = userDAO.executeQuery(query);
                     output.writeObject(result);
                 } else {
                     result = "Access denied: Insufficient permissions";
@@ -224,30 +224,30 @@ public class DatabaseServer {
         }
         
 
-        private boolean validateQueryPermissions(String query, Set<Role> roles) {
-            String operation = extractOperation(query);
-            String object = extractObject(query);
+        private boolean validateQueryPermissions(String query, Set<Role> roles) {// controlla se la query può essere eseguita con i permessi impostati
+            String operation = extractOperation(query);//estrare operazione
+            String object = extractObject(query);//estrae oggetto
 
-            return roles.stream()
+            return roles.stream()//controllo se almeno un ruole dell'utente ha i permessi necessari a eseguire la query
                 .anyMatch(role -> role.hasPermission(new Permission(operation, object)) ||
                                 role.hasPermission(new Permission(operation, "*")));
         }
 
-        private String extractOperation(String query) {
+        private String extractOperation(String query) {//estrae operazione e formatta
             String upperQuery = query.trim().toUpperCase();
             return upperQuery.split("\\s+")[0];
         }
 
-        private String extractObject(String query) {
+        private String extractObject(String query) {//estrae oggetto e formatta
             String upperQuery = query.trim().toUpperCase();
             String[] parts = upperQuery.split("\\s+");
-            for (int i = 0; i < parts.length; i++) {
+            for (int i = 0; i < parts.length; i++) {//cerca parola chiave per tabella e restiruisce il nome di riferimento
                 if (parts[i].equals("FROM") || parts[i].equals("INTO") || 
                     parts[i].equals("UPDATE")) {
-                    return parts[i + 1];
+                    return parts[i + 1];//restiruisce la tabella associata all'operazione
                 }
             }
-            return "*";
+            return "*";//altrimenti resturisce tutto
         }
     }
 }

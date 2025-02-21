@@ -19,11 +19,11 @@ public class QueryGUI {
     private JPasswordField passwordField;
 
     public QueryGUI() {
-        this.databaseProxy = DatabaseProxyFactory.getProxy();
+        this.databaseProxy = DatabaseProxyFactory.getProxy(); //inizializzo il proxy del db tramite factory
         createLoginFrame();
     }
 
-    private void createLoginFrame() {
+    private void createLoginFrame() { //creo finestra login
         JFrame loginFrame = new JFrame("Database Login");
         loginFrame.setSize(500, 500); 
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -32,7 +32,7 @@ public class QueryGUI {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
     
-        ImageIcon logoIcon = new ImageIcon("src\\main\\java\\com\\example\\queryGUI.png");
+        ImageIcon logoIcon = new ImageIcon("src\\main\\java\\com\\example\\queryGUI.png"); //logo
         Image image = logoIcon.getImage();
         Image scaledImage = image.getScaledInstance(250, -1, Image.SCALE_SMOOTH); 
         ImageIcon scaledIcon = new ImageIcon(scaledImage); 
@@ -43,7 +43,7 @@ public class QueryGUI {
         JButton loginButton = new JButton("Login");
         JLabel statusLabel = new JLabel(" ");
     
-        emailField.addKeyListener(new KeyAdapter() {
+        emailField.addKeyListener(new KeyAdapter() { //listener tasto invio
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -61,14 +61,14 @@ public class QueryGUI {
             }
         });
     
-        loginButton.addActionListener(e -> {
+        loginButton.addActionListener(e -> { //bottone di login invio credenziali tramite il proxy
             try {
                 String response = databaseProxy.authenticate(
                     emailField.getText(), 
                     new String(passwordField.getPassword())
                 );
                 
-                if (response.startsWith("Authentication successful")) {
+                if (response.startsWith("Authentication successful")) { //login success allora entro nella finestra principale
                     loginFrame.dispose();
                     createMainFrame();
                 } else {
@@ -79,7 +79,7 @@ public class QueryGUI {
             }
         });
     
-        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2; //modificatori per componenti finestre
         gbc.anchor = GridBagConstraints.CENTER; 
         gbc.fill = GridBagConstraints.NONE;
         panel.add(logoLabel, gbc);
@@ -109,7 +109,7 @@ public class QueryGUI {
         loginFrame.setVisible(true);
     }    
 
-    private void createMainFrame() {
+    private void createMainFrame() { // creo finestra principale
         mainFrame = new JFrame("Database Query Interface");
         mainFrame.setSize(800, 600);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -121,7 +121,7 @@ public class QueryGUI {
         
         JButton executeButton = new JButton("Execute Query");
         JButton copyButton = new JButton("Copy Results");
-        queryField.addKeyListener(new KeyAdapter() {
+        queryField.addKeyListener(new KeyAdapter() { // listener tasto invio per inviare query tramite metodo
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -130,16 +130,16 @@ public class QueryGUI {
             }
         });
 
-        executeButton.addActionListener(e -> executeQuery());
+        executeButton.addActionListener(e -> executeQuery()); //tramite bottone
         
-        copyButton.addActionListener(e -> {
+        copyButton.addActionListener(e -> { // bottone copia risultati
             StringSelection stringSelection = new StringSelection(resultArea.getText());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);
             JOptionPane.showMessageDialog(mainFrame, "Results copied to clipboard!");
         });
 
-        mainFrame.setLayout(new BorderLayout());
+        mainFrame.setLayout(new BorderLayout()); // layout finestra principale
         JPanel topPanel = new JPanel(new BorderLayout());
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(executeButton);
@@ -155,7 +155,7 @@ public class QueryGUI {
         mainFrame.add(topPanel, BorderLayout.NORTH);
         mainFrame.add(resultPanel, BorderLayout.CENTER);
 
-        mainFrame.addWindowListener(new WindowAdapter() {
+        mainFrame.addWindowListener(new WindowAdapter() {//chiusura finestra chiusura connessione 
             @Override
             public void windowClosing(WindowEvent e) {
                 databaseProxy.close();
@@ -166,7 +166,7 @@ public class QueryGUI {
         mainFrame.setVisible(true);
     }
 
-    private void executeQuery() {
+    private void executeQuery() { //prende la query e la esegue tramite proxy
         String query = queryField.getText();
         if (query.isEmpty()) {
             JOptionPane.showMessageDialog(mainFrame, "Please enter a query");
@@ -182,7 +182,7 @@ public class QueryGUI {
         }
     }
 
-    private String formatQueryResult(String result) {
+    private String formatQueryResult(String result) {// formattazione per le query a schermo
         if (result == null || result.isEmpty()) return "";
         
         String[] lines = result.split("\n");
@@ -224,7 +224,7 @@ public class QueryGUI {
     }
 
     public static void main(String[] args) {
-        FlatLightLaf.setup();
+        FlatLightLaf.setup();//tema
         SwingUtilities.invokeLater(() -> new QueryGUI());
     }
 }

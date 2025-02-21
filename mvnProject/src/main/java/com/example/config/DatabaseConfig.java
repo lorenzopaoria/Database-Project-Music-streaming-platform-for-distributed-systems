@@ -10,7 +10,7 @@ public class DatabaseConfig {
 
     static {
         properties = new Properties();
-        try (FileInputStream fis = new FileInputStream(CONFIG_FILE)) {
+        try (FileInputStream fis = new FileInputStream(CONFIG_FILE)) {//prende dal file la configurazione
             properties.load(fis);
         } catch (IOException e) {
             // per vedere se funziona intanto

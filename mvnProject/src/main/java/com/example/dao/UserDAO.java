@@ -9,14 +9,14 @@ public class UserDAO {
     private final Connection connection;
 
     public UserDAO(Connection connection) {
-        this.connection = connection;
+        this.connection = connection;//inzializza connessione
     }
 
-    public String authenticate(String email, String password) throws SQLException {
+    public String authenticate(String email, String password) throws SQLException {//metodo di autenticazione
         String query =  "SELECT u.tipo \n" +
                         "FROM Utente u \n" +
                         "WHERE u.email = ? AND u.passw = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {//preparedstatement per evitare SQL injection
             stmt.setString(1, email);
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
@@ -28,7 +28,7 @@ public class UserDAO {
         }
     }
 
-    public String executeQuery(String query) throws SQLException {
+    public String executeQuery(String query) throws SQLException {//metodo per eseguire le queries
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             boolean isSelect = query.trim().toUpperCase().startsWith("SELECT");
             if (isSelect) {
@@ -41,7 +41,7 @@ public class UserDAO {
         }
     }
 
-    private String formatResultSet(ResultSet rs) throws SQLException {
+    private String formatResultSet(ResultSet rs) throws SQLException {//metodo per il formattamento dei risultati
         StringBuilder result = new StringBuilder();
         int columnCount = rs.getMetaData().getColumnCount();
         

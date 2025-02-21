@@ -9,13 +9,13 @@ public class DatabaseClient {
     private static final String SERVER_HOST = "127.0.0.1";
     private static final int SERVER_PORT = 12345;
 
-    private static final List<UserTest> TEST_USERS = new ArrayList<>();
+    private static final List<UserTest> TEST_USERS = new ArrayList<>();//lista di utenti su cui fare test
     static {
         TEST_USERS.add(new UserTest("margheritaursino@gmail.com", "marghe02", "free"));
         TEST_USERS.add(new UserTest("annapistorio@gmail.com", "anna04", "premium"));
     }
 
-    private static final List<QueryTest> QUERIES = new ArrayList<>();
+    private static final List<QueryTest> QUERIES = new ArrayList<>();//lista di queries da eseguire per test
     static {
         QUERIES.add(new QueryTest("SELECT * FROM Contenuto LIMIT 5", true));  // Select query (allowed for all)
         QUERIES.add(new QueryTest("UPDATE Contenuto SET nome = 'Test Title' WHERE idContenuto = 1", true));  // Update query (allowed for premium)
@@ -24,7 +24,7 @@ public class DatabaseClient {
     }
 
     public static void main(String[] args) {
-        TEST_USERS.forEach(DatabaseClient::runUserScenarioTest);
+        TEST_USERS.forEach(DatabaseClient::runUserScenarioTest);//esegue test per ogni utente
     }
 
     private static void runUserScenarioTest(UserTest user) {
@@ -34,13 +34,13 @@ public class DatabaseClient {
             ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
             
-            String sessionId = authenticate(output, input, user);
+            String sessionId = authenticate(output, input, user);//autentificazione 
             if (sessionId == null) {
                 System.out.println("Authentication failed for " + user.email);
                 return;
             }
 
-            QUERIES.forEach(query -> testQuery(output, input, sessionId, query, user));
+            QUERIES.forEach(query -> testQuery(output, input, sessionId, query, user));//esecuzione query
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -48,35 +48,35 @@ public class DatabaseClient {
     }
 
     private static String authenticate(ObjectOutputStream output, ObjectInputStream input, UserTest user) throws IOException, ClassNotFoundException {
-        output.writeObject("AUTH");
+        output.writeObject("AUTH");//indichiamo al server l'invio di una richiesa di autentificazione
         output.writeObject(user.email);
         output.writeObject(user.password);
         output.flush();
         
-        String authResponse = (String) input.readObject();
+        String authResponse = (String) input.readObject();//risposta del server
         System.out.println("Authentication Result: " + authResponse);
         
         if (authResponse.startsWith("Authentication successful")) {
-            return authResponse.split(":")[1].trim();
+            return authResponse.split(":")[1].trim();//formattazione risposta
         }
         return null;
     }
 
     private static void testQuery(ObjectOutputStream output, ObjectInputStream input, String sessionId, QueryTest query, UserTest user) {
         try {
-            output.writeObject("QUERY");
+            output.writeObject("QUERY");//indichiamo al server l'invio di richiesa esecuzione query
             output.writeObject(sessionId);
             output.writeObject(query.sql);
             output.flush();
             
-            String queryResult = (String) input.readObject();
+            String queryResult = (String) input.readObject();//ricevo risultato query
             boolean isAllowed;
             if (user.role.equals("admin")) {
-                isAllowed = true; // admin can execute all queries
+                isAllowed = true; // admin può eseguire tutte le query
             } else if (user.role.equals("premium")) { 
-                isAllowed = query.expectedAllowed || query.sql.trim().toUpperCase().startsWith("SELECT"); // premium users can execute SELECT, UPDATE, and INSERT queries
+                isAllowed = query.expectedAllowed || query.sql.trim().toUpperCase().startsWith("SELECT"); // premium posso eseguire SELECT, UPDATE, e INSERT queries
             } else {  
-                isAllowed = query.sql.trim().toUpperCase().startsWith("SELECT"); // free users can only execute SELECT queries
+                isAllowed = query.sql.trim().toUpperCase().startsWith("SELECT"); // free possono eseguire SELECT queries
             }
             
             boolean actuallyAllowed = !queryResult.contains("Access denied");

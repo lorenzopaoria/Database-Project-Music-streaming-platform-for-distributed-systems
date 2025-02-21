@@ -11,7 +11,7 @@ public class DatabaseFactory {
     public static Connection getConnection() {
         if (connection == null) {
             try {
-                connection = DriverManager.getConnection(
+                connection = DriverManager.getConnection(//connessione configurata tramite i parametri passati da databaseConfig
                     DatabaseConfig.getDatabaseUrl(),
                     DatabaseConfig.getDatabaseUser(),
                     DatabaseConfig.getDatabasePassword()

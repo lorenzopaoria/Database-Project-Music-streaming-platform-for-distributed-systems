@@ -9,21 +9,21 @@ public class Session {
     private final String userId;
     private final Set<Role> activeRoles;
     private LocalDateTime lastAccessTime;
-    private static final int SESSION_TIMEOUT_MINUTES = 5;
+    private static final int SESSION_TIMEOUT_MINUTES = 5;//session timeout
 
     public String getUserId() {
         return userId;
     }
 
-    public Session(String userId) {
-        this(userId, UUID.randomUUID().toString());
+    public Session(String userId) {//crea sessione per un utente
+        this(userId, UUID.randomUUID().toString());//genera sessionId usando UUID
     }
 
-    public Session(String userId, String sessionId) {
+    public Session(String userId, String sessionId) {//inizializzazione di una sessione con un insieme di ruoli
         this.userId = userId;
         this.sessionId = sessionId;
         this.activeRoles = new HashSet<>();
-        updateLastAccessTime();
+        updateLastAccessTime();//aggiorno tempo di accesso
     }
 
     public void activate(Role role) {
@@ -36,7 +36,7 @@ public class Session {
         return Collections.unmodifiableSet(activeRoles);
     }
 
-    public boolean isExpired() {
+    public boolean isExpired() {//controlla se la sessione è scaduta
         return LocalDateTime.now().minusMinutes(SESSION_TIMEOUT_MINUTES)
                 .isAfter(lastAccessTime);
     }
