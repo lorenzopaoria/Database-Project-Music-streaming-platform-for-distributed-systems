@@ -103,10 +103,15 @@ To run a profile defined in the pom.xml file, use the following command:
  ```
  mvn -Pserver exec:java
    ```
-If you need to run a different profile, such as client, you can specify it like this:
+If you need to run a different profile, such as clientTest, you can specify it like this:
 
  ```
  mvn -Pclient exec:java
+   ```
+If you need to run a GUI profile, such as client, you can specify it like this:
+
+ ```
+ mvn -Pgui exec:java
    ```
 
 ## Contributing
