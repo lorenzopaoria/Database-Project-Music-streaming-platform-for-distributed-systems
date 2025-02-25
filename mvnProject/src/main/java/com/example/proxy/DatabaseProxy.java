@@ -4,7 +4,7 @@ import com.example.session.Session;
 import java.io.*;
 import java.net.Socket;
 
-public class DatabaseProxy {
+public class DatabaseProxy implements IDatabaseProxy {
     private Session session;
     private Socket socket;
     private ObjectOutputStream output;

@@ -2,6 +2,7 @@ package com.example;
 
 import com.example.factory.DatabaseProxyFactory;
 import com.example.proxy.DatabaseProxy;
+import com.example.proxy.IDatabaseProxy;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +12,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Clipboard;
 
 public class QueryGUI {
-    private final DatabaseProxy databaseProxy;
+    private final IDatabaseProxy databaseProxy;
     private JFrame mainFrame;
     private JTextArea resultArea;
     private JTextField queryField;
@@ -19,7 +20,7 @@ public class QueryGUI {
     private JPasswordField passwordField;
 
     public QueryGUI() {
-        this.databaseProxy = DatabaseProxyFactory.getProxy(); //inizializzo il proxy del db tramite factory
+        this.databaseProxy = DatabaseProxyFactory.getProxy();
         createLoginFrame();
     }
 
