@@ -1,7 +1,6 @@
 package com.example;
 
 import com.example.factory.DatabaseProxyFactory;
-import com.example.proxy.DatabaseProxy;
 import com.example.proxy.IDatabaseProxy;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
